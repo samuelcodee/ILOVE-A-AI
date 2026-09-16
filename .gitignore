@@ -1,0 +1,21 @@
+# No GitHub Pages o repositório É o site: tudo que entra aqui fica público
+# e baixável. A barra inicial ancora na raiz, então nada dentro de assets/
+# é afetado — só o material de referência que mora solto na pasta.
+
+# vídeos e prints de referência, imagens geradas
+/*.mp4
+/*.png
+/*.jpg
+/*.jpeg
+/*.jfif
+/*.gif
+/*.webp
+/ezgif-*/
+
+# sistema
+Thumbs.db
+desktop.ini
+.DS_Store
+
+# dependências, caso um dia entre alguma
+node_modules/

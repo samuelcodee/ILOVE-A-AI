@@ -1,0 +1,15 @@
+# Texto entra no repositório sempre com LF, seja qual for o sistema.
+# Sem isto o Windows grava CRLF e qualquer diff futuro vira ruído.
+* text=auto eol=lf
+
+# Mídia é binária: o git não pode tentar "normalizar" nada aqui dentro.
+*.jpg  binary
+*.jpeg binary
+*.png  binary
+*.webp binary
+*.jfif binary
+*.gif  binary
+*.ico  binary
+*.mp4  binary
+*.woff  binary
+*.woff2 binary

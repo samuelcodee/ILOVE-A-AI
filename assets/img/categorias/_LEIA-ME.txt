@@ -1,0 +1,49 @@
+Arte das categorias do cardapio.
+
+Cada categoria usa dois arquivos:
+  NOME.jpg         capa   -> a foto dentro do card do carrossel
+  NOME-fundo.jpg   banner -> a imagem atras da vitrine e do painel
+
+ESTADO ATUAL  (9/9 capas — completo em 2026-09-15)
+  categoria             capa   banner
+  acai                   ok      ok
+  sanduiche-natural      ok      ok
+  sanduiche-artesanal    ok      ok
+  wraps                  ok      ok
+  saladas                ok      ok
+  sopas                  ok      ok
+  omelete                ok      ok
+  sucos                  ok      ok
+  bebidas                ok      ok
+
+PARA ADICIONAR UMA CAPA QUE FALTA
+  1. salve o arquivo aqui com o nome da tabela (ex.: sucos.jpg)
+  2. no index.html, no card daquela categoria, tire o comentario da
+     linha <img data-src="assets/img/categorias/sucos.jpg" ...>
+     (e data-src mesmo, nao src: o site so pede a foto quando a secao
+      esta chegando, pra nao competir com o hero no primeiro carregamento)
+  Pronto. A moldura tracejada de espera some sozinha.
+
+FORMATO
+  capa    vertical 4x5. E cortada pelo centro, entao o prato precisa
+          estar no meio. Eu reencodo em 640x800.
+  banner  horizontal e larga. Leva desfoque de 3px e veu escuro por
+          cima (84% no topo, 66% embaixo) para o texto creme manter
+          contraste. Eu reencodo com no maximo 1600 de largura.
+
+OBSERVACAO DA ARTESANAL
+  A foto original do sanduiche artesanal era um post de rede social,
+  com "FRANPESTO irresistivel" escrito em cima. O corte comeca em
+  y=480 justamente pra deixar a tipografia de fora: o nome gigante da
+  categoria ja fica acima do card, e duas tipografias na mesma tela
+  brigam. Se um dia chegar a foto sem texto, e so trocar o arquivo.
+
+COR DE FUNDO
+  O data-cor de cada card no index.html foi tirado da cor mais
+  frequente do banner e escurecido ate passar de 5,5:1 com o creme.
+  Se trocar um banner, a cor precisa ser recalculada junto.
+
+SE O ARQUIVO NAO EXISTIR
+  .png tambem funciona: se o .jpg faltar o site tenta o .png sozinho.
+  Sem nenhum dos dois, o card volta para a moldura tracejada e o fundo
+  volta para a cor chapada. Nada quebra.

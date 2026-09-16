@@ -1,0 +1,1032 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Love Açaí — Ame o que te faz bem</title>
+<meta name="description" content="Açaí, sopas e lanches saudáveis em Fortaleza. Feito na hora, entregue quentinho — ou bem gelado.">
+<link rel="icon" href="assets/img/favicon-64.png" sizes="64x64">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600&family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/css/styles.css">
+</head>
+<body data-zona="hero">
+
+<a class="skip" href="#dock">Pular para a navegação</a>
+
+<header class="nav">
+  <a class="nav__logo" href="#hero" aria-label="Love Açaí — página inicial">
+    <picture><source type="image/webp" srcset="assets/img/logo-love-acai.webp"><img src="assets/img/logo-love-acai.jpg" alt="Love Açaí" width="192" height="192"></picture>
+  </a>
+
+  <nav class="nav__links" id="navLinks" aria-label="Principal">
+    <a href="#loja" data-ir>a loja</a>
+    <a href="#cardapio" data-ir>cardápio</a>
+    <a href="#delivery" data-ir>delivery</a>
+    <a href="#mapa" data-ir>localização</a>
+  </nav>
+
+  <div class="nav__actions">
+    <a class="btn-order" href="https://wa.me/5585994077570?text=Oi!%20Quero%20fazer%20um%20pedido%20%F0%9F%92%9C" target="_blank" rel="noopener">peça agora</a>
+    <button class="btn-round" id="navToggle" aria-expanded="false" aria-controls="navLinks" aria-label="Abrir menu">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>
+    </button>
+  </div>
+</header>
+
+<main>
+<!-- ===========================================================
+     PARTE 1 — vitrine. O hero fica preso na tela enquanto o vídeo
+     é arrastado pelo scroll; no fim solta e a loja sobe por cima.
+     =========================================================== -->
+<section class="hero" id="hero">
+  <div class="hero__pin">
+    <div class="hero__stage" id="stage">
+
+      <svg class="blob" viewBox="0 0 1200 820" preserveAspectRatio="none" aria-hidden="true">
+        <path d="M128 34C330 14 560 26 760 20c120-4 240 2 314 16 62 12 96 56 100 120 6 144-8 314-2 470 4 78-32 138-110 154-182 20-462 4-682 12-112 4-228 0-284-22-56-22-74-70-70-134-6-166 8-336 2-480 4-64 46-110 108-122z"/>
+      </svg>
+
+      <div class="media">
+        <div class="media__slot media__slot--live">
+          <video data-sd="assets/video/acai-hero.mp4" data-hd="assets/video/acai-hero-hd.mp4" data-sm="assets/video/acai-hero-sm.mp4"
+                 poster="assets/video/acai-hero-poster.webp"
+                 autoplay muted loop playsinline preload="auto"
+                 aria-label="Tigela de açaí com morango, banana e granola flutuando"></video>
+        </div>
+      </div>
+
+      <article class="scene is-on">
+        <h1 class="giant" aria-label="açaí cremoso do seu jeito">
+          <span class="ln" aria-hidden="true">açaí</span>
+          <span class="ln" aria-hidden="true">cremoso</span>
+          <span class="ln" aria-hidden="true">do seu jeito</span>
+        </h1>
+        <p class="pitch">cremoso.<br>gelado.<br>na hora.</p>
+      </article>
+
+      <div class="seal" aria-hidden="true">
+        <svg class="seal__ring" viewBox="0 0 120 120">
+          <defs><path id="sealPath" d="M60,60 m-44,0 a44,44 0 1,1 88,0 a44,44 0 1,1 -88,0"/></defs>
+          <text><textPath href="#sealPath" startOffset="0">feito na hora • 100% natural • feito na hora • 100% natural • </textPath></text>
+        </svg>
+        <svg class="seal__mark" viewBox="0 0 120 128">
+          <path d="M60 118C32 96 13 78 13 54 13 36 26 24 41 24c8 0 15 4 19 11 4-7 11-11 19-11 15 0 28 12 28 30 0 24-19 42-47 64z"/>
+          <path d="M61 33c-2-14 7-25 21-28 3 13-5 25-19 29z"/>
+          <path d="M63 35c9-10 23-12 34-7-5 12-18 19-31 15z"/>
+        </svg>
+      </div>
+
+      <a class="cue" href="#loja" data-ir aria-label="Ir para as informações da loja">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4v14"/><path d="m6 13 6 6 6-6"/></svg>
+      </a>
+
+    </div>
+  </div>
+</section>
+
+<!-- ===========================================================
+     PARTE 2 — a loja. Texto à esquerda, reel vertical à direita.
+     Sobe por cima do fim do hero para emendar as duas seções.
+     O vídeo só é baixado quando a seção entra em cena.
+     =========================================================== -->
+<section class="loja" id="loja">
+  <div class="loja__painel" data-revela>
+
+    <div class="loja__texto">
+      <p class="sobrancelha"><i aria-hidden="true"></i>a loja</p>
+
+      <h2 class="titulo" aria-label="ame o que te faz bem">
+        <span class="ln" aria-hidden="true">ame o que</span>
+        <span class="ln" aria-hidden="true">te faz bem</span>
+      </h2>
+
+      <div class="loja__lead">
+        <p>A gente abre às 18h, quando o calor de Fortaleza finalmente cede, e
+          fica até as 23h. Todo dia, sem exceção.</p>
+        <p>Você escolhe o tamanho, as frutas e os complementos. Sopa e lanche
+          saem do mesmo balcão.</p>
+        <p class="loja__lead-curta">Dá pra comer aqui na loja ou pedir o delivery.
+          Os dois funcionam igual.</p>
+      </div>
+
+      <ul class="dados">
+        <li class="dado">
+          <span class="dado__ico" aria-hidden="true">
+            <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>
+          </span>
+          <span class="dado__txt"><b>todos os dias</b>das 18h às 23h</span>
+        </li>
+        <li class="dado">
+          <a class="dado__link" href="#mapa" data-ir>
+            <span class="dado__ico" aria-hidden="true">
+              <svg viewBox="0 0 24 24"><path d="M12 21c-4.5-4.6-7-7.7-7-10.6A7 7 0 0 1 19 10.4c0 2.9-2.5 6-7 10.6z"/><circle cx="12" cy="10" r="2.6"/></svg>
+            </span>
+            <span class="dado__txt"><b>Parque 2 Irmãos</b>Av. Norte e Sul, Cj. Jardim Primavera — Fortaleza, CE
+              <i class="dado__chama">ver no mapa e traçar a rota</i></span>
+            <svg class="dado__seta" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+          </a>
+        </li>
+        <li class="dado">
+          <a class="dado__link" href="#delivery" data-ir>
+            <span class="dado__ico" aria-hidden="true">
+              <svg viewBox="0 0 24 24"><circle cx="18.5" cy="17.5" r="3.5"/><circle cx="5.5" cy="17.5" r="3.5"/><circle cx="15" cy="5" r="1"/><path d="M12 17.5V14l-3-3 4-3 2 3h2"/></svg>
+            </span>
+            <span class="dado__txt"><b>come aqui ou recebe em casa</b>a taxa do delivery a gente combina na conversa
+              <i class="dado__chama">ver como funciona a entrega</i></span>
+            <svg class="dado__seta" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+          </a>
+        </li>
+        <li class="dado">
+          <a class="dado__link" href="https://instagram.com/ilove_acai" target="_blank" rel="noopener">
+            <span class="dado__ico" aria-hidden="true">
+              <svg viewBox="0 0 24 24"><rect x="3.5" y="3.5" width="17" height="17" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.2" cy="6.8" r="1"/></svg>
+            </span>
+            <span class="dado__txt"><b>@ilove_acai</b>o cardápio do dia sai nos stories
+              <i class="dado__chama">abrir o perfil</i></span>
+            <svg class="dado__seta" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 17 17 7M9 7h8v8"/></svg>
+          </a>
+        </li>
+      </ul>
+
+      <div class="loja__acoes">
+        <a class="btn-zap" href="https://wa.me/5585994077570?text=Oi!%20Quero%20fazer%20um%20pedido%20%F0%9F%92%9C" target="_blank" rel="noopener">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7.9 20A9 9 0 1 0 4 16.1L2 22z"/></svg>
+          pedir no whatsapp
+        </a>
+        <a class="btn-insta" href="https://instagram.com/ilove_acai" target="_blank" rel="noopener">ver o instagram</a>
+      </div>
+    </div>
+
+    <div class="loja__midia">
+      <div class="reel">
+        <video data-src="assets/video/loja.mp4"
+               poster="assets/video/loja-poster.webp"
+               muted loop playsinline preload="none"
+               width="720" height="1280"
+               aria-label="Montagem de um copo de açaí no balcão da loja: cobertura, açaí e complementos"></video>
+      </div>
+      <span class="carimbo" aria-hidden="true">
+        <b>feito</b>na hora
+      </span>
+    </div>
+
+  </div>
+
+  <div class="frases" aria-hidden="true">
+    <div class="frases__trilho">
+      <span>ame o que te faz bem</span><i></i>
+      <span>seu momento mais gostoso do dia</span><i></i>
+      <span>mais sabor, mais amor</span><i></i>
+      <span>um carinho em forma de açaí</span><i></i>
+      <span>seu açaí, seu momento</span><i></i>
+      <span>ame o que te faz bem</span><i></i>
+      <span>seu momento mais gostoso do dia</span><i></i>
+      <span>mais sabor, mais amor</span><i></i>
+      <span>um carinho em forma de açaí</span><i></i>
+      <span>seu açaí, seu momento</span><i></i>
+    </div>
+  </div>
+</section>
+
+<!-- ===========================================================
+     PARTE 3 — cardápio, montagem e finalização do pedido.
+     Preços reais, tirados do PDF oficial do Linktree (2026-09-14).
+     O açaí ainda não entra aqui: é vendido por peso, sem tabela
+     fechada — enquanto isso, o card dele manda direto pro WhatsApp.
+     =========================================================== -->
+<section class="cardapio" id="cardapio">
+  <div class="cardapio__cabecalho" data-revela>
+    <p class="sobrancelha"><i aria-hidden="true"></i>cardápio</p>
+    <h2 class="titulo" aria-label="monte do seu jeito">
+      <span class="ln" aria-hidden="true">monte do</span>
+      <span class="ln" aria-hidden="true">seu jeito</span>
+    </h2>
+    <p class="cardapio__intro">Escolhe o que quiser, vê o total aqui embaixo e manda
+      pra gente fechar no WhatsApp. Sem cadastro, sem cartão — o pagamento combina
+      na conversa.</p>
+  </div>
+
+
+  <!-- ---------- palco das categorias ----------
+       Vitrine em carrossel, no espírito da referência: a categoria do meio é a
+       ativa, as de trás e dos lados ficam menores e desfocadas. Não existe seta
+       — o clique é na própria categoria, e no celular o dedo arrasta pro lado.
+       As fotos ainda não existem: cada .catcard__foto tem um lugar guardado.
+       Pra colocar a imagem é só descomentar o <img> de dentro — o desenho de
+       espera some sozinho quando encontra uma. -->
+  <div class="palco" id="palco" data-revela>
+    <!-- fundo de categoria: só aparece quando a categoria do meio tem
+         data-fundo e a imagem realmente carregou -->
+    <span class="palco__fundo" aria-hidden="true"><span></span><span></span></span>
+    <span class="palco__grao" aria-hidden="true"></span>
+
+    <!-- enfeites soltos no ar; se um dia virarem frutas recortadas,
+         é só pôr um <img> dentro de cada .solta -->
+    <span class="palco__ar" aria-hidden="true">
+      <span class="solta" style="--x:12%;--y:26%;--t:86px;--a:0s;--g:-14deg"></span>
+      <span class="solta" style="--x:84%;--y:20%;--t:64px;--a:-2.4s;--g:11deg"></span>
+      <span class="solta" style="--x:22%;--y:62%;--t:52px;--a:-4.1s;--g:8deg"></span>
+      <span class="solta" style="--x:78%;--y:58%;--t:74px;--a:-1.2s;--g:-9deg"></span>
+      <span class="solta" style="--x:48%;--y:12%;--t:44px;--a:-3.3s;--g:16deg"></span>
+      <span class="solta" style="--x:66%;--y:78%;--t:40px;--a:-5.2s;--g:-6deg"></span>
+    </span>
+
+    <p class="palco__marca">escolhe a categoria</p>
+    <p class="palco__fantasma" id="palcoFantasma" aria-hidden="true">açaí</p>
+
+    <div class="palco__carrossel" id="palcoCarrossel"
+         role="group" aria-roledescription="carrossel"
+         aria-label="Categorias do cardápio — clique numa categoria do lado para trazê-la pra frente">
+      <button class="catcard" type="button" data-catcard
+              data-alvo="#cat-acai" data-cor="#8E247A" data-nome="açaí" data-linha="pesado na balança, montado do seu jeito"
+              data-fundo="assets/img/categorias/acai-fundo.jpg">
+        <span class="catcard__foto">
+          <picture><source type="image/webp" data-srcset="assets/img/categorias/acai-320.webp 320w, assets/img/categorias/acai-480.webp 480w, assets/img/categorias/acai.webp 640w" sizes="(max-width: 860px) 145px, 235px"><img data-src="assets/img/categorias/acai.jpg" alt="" decoding="async"></picture>
+          <span class="catcard__reserva" aria-hidden="true">
+            <svg viewBox="0 0 40 40"><path d="M6 27.5 14.2 18l6.4 7.2 4.6-4.8L34 29"/><circle cx="14" cy="11.5" r="3.1"/><rect x="3" y="5" width="34" height="30" rx="6"/></svg>
+          </span>
+        </span>
+        <span class="catcard__chapa">açaí</span>
+      </button>
+      <button class="catcard" type="button" data-catcard
+              data-alvo="#cat-sanduiche-natural" data-cor="#8E5600" data-nome="sanduíche natural" data-linha="pão integral, salada e patê Made In Love"
+              data-fundo="assets/img/categorias/sanduiche-natural-fundo.jpg">
+        <span class="catcard__foto">
+          <picture><source type="image/webp" data-srcset="assets/img/categorias/sanduiche-natural-320.webp 320w, assets/img/categorias/sanduiche-natural-480.webp 480w, assets/img/categorias/sanduiche-natural.webp 640w" sizes="(max-width: 860px) 145px, 235px"><img data-src="assets/img/categorias/sanduiche-natural.jpg" alt="" decoding="async"></picture>
+          <span class="catcard__reserva" aria-hidden="true">
+            <svg viewBox="0 0 40 40"><path d="M6 27.5 14.2 18l6.4 7.2 4.6-4.8L34 29"/><circle cx="14" cy="11.5" r="3.1"/><rect x="3" y="5" width="34" height="30" rx="6"/></svg>
+          </span>
+        </span>
+        <span class="catcard__chapa">sanduíche natural</span>
+      </button>
+      <button class="catcard" type="button" data-catcard
+              data-alvo="#cat-sanduiche-artesanal" data-cor="#783800" data-nome="sanduíche artesanal" data-linha="pão artesanal e recheio que sustenta a noite"
+              data-fundo="assets/img/categorias/sanduiche-artesanal-fundo.jpg">
+        <span class="catcard__foto">
+          <picture><source type="image/webp" data-srcset="assets/img/categorias/sanduiche-artesanal-320.webp 320w, assets/img/categorias/sanduiche-artesanal-480.webp 480w, assets/img/categorias/sanduiche-artesanal.webp 640w" sizes="(max-width: 860px) 145px, 235px"><img data-src="assets/img/categorias/sanduiche-artesanal.jpg" alt="" decoding="async"></picture>
+          <span class="catcard__reserva" aria-hidden="true">
+            <svg viewBox="0 0 40 40"><path d="M6 27.5 14.2 18l6.4 7.2 4.6-4.8L34 29"/><circle cx="14" cy="11.5" r="3.1"/><rect x="3" y="5" width="34" height="30" rx="6"/></svg>
+          </span>
+        </span>
+        <span class="catcard__chapa">sanduíche artesanal</span>
+      </button>
+      <button class="catcard" type="button" data-catcard
+              data-alvo="#cat-wraps" data-cor="#8C4A07" data-nome="wraps" data-linha="massa integral enrolada com salada dentro"
+              data-fundo="assets/img/categorias/wraps-fundo.jpg">
+        <span class="catcard__foto">
+          <picture><source type="image/webp" data-srcset="assets/img/categorias/wraps-320.webp 320w, assets/img/categorias/wraps-480.webp 480w, assets/img/categorias/wraps.webp 640w" sizes="(max-width: 860px) 145px, 235px"><img data-src="assets/img/categorias/wraps.jpg" alt="" decoding="async"></picture>
+          <span class="catcard__reserva" aria-hidden="true">
+            <svg viewBox="0 0 40 40"><path d="M6 27.5 14.2 18l6.4 7.2 4.6-4.8L34 29"/><circle cx="14" cy="11.5" r="3.1"/><rect x="3" y="5" width="34" height="30" rx="6"/></svg>
+          </span>
+        </span>
+        <span class="catcard__chapa">wraps</span>
+      </button>
+      <button class="catcard" type="button" data-catcard
+              data-alvo="#cat-saladas" data-cor="#0E3941" data-nome="saladas" data-linha="100g de proteína no pote, verde de verdade"
+              data-fundo="assets/img/categorias/saladas-fundo.jpg">
+        <span class="catcard__foto">
+          <picture><source type="image/webp" data-srcset="assets/img/categorias/saladas-320.webp 320w, assets/img/categorias/saladas-480.webp 480w, assets/img/categorias/saladas.webp 640w" sizes="(max-width: 860px) 145px, 235px"><img data-src="assets/img/categorias/saladas.jpg" alt="" decoding="async"></picture>
+          <span class="catcard__reserva" aria-hidden="true">
+            <svg viewBox="0 0 40 40"><path d="M6 27.5 14.2 18l6.4 7.2 4.6-4.8L34 29"/><circle cx="14" cy="11.5" r="3.1"/><rect x="3" y="5" width="34" height="30" rx="6"/></svg>
+          </span>
+        </span>
+        <span class="catcard__chapa">saladas</span>
+      </button>
+      <button class="catcard" type="button" data-catcard
+              data-alvo="#cat-sopas" data-cor="#4E4F11" data-nome="sopas" data-linha="o caldo pra quando bate a vontade"
+              data-fundo="assets/img/categorias/sopas-fundo.jpg">
+        <span class="catcard__foto">
+          <picture><source type="image/webp" data-srcset="assets/img/categorias/sopas-320.webp 320w, assets/img/categorias/sopas-480.webp 480w, assets/img/categorias/sopas.webp 640w" sizes="(max-width: 860px) 145px, 235px"><img data-src="assets/img/categorias/sopas.jpg" alt="" decoding="async"></picture>
+          <span class="catcard__reserva" aria-hidden="true">
+            <svg viewBox="0 0 40 40"><path d="M6 27.5 14.2 18l6.4 7.2 4.6-4.8L34 29"/><circle cx="14" cy="11.5" r="3.1"/><rect x="3" y="5" width="34" height="30" rx="6"/></svg>
+          </span>
+        </span>
+        <span class="catcard__chapa">sopas</span>
+      </button>
+      <button class="catcard" type="button" data-catcard
+              data-alvo="#cat-omelete" data-cor="#696054" data-nome="omelete" data-linha="ovo, salada e a proteína que você escolher"
+              data-fundo="assets/img/categorias/omelete-fundo.jpg">
+        <span class="catcard__foto">
+          <picture><source type="image/webp" data-srcset="assets/img/categorias/omelete-320.webp 320w, assets/img/categorias/omelete-480.webp 480w, assets/img/categorias/omelete.webp 640w" sizes="(max-width: 860px) 145px, 235px"><img data-src="assets/img/categorias/omelete.jpg" alt="" decoding="async"></picture>
+          <span class="catcard__reserva" aria-hidden="true">
+            <svg viewBox="0 0 40 40"><path d="M6 27.5 14.2 18l6.4 7.2 4.6-4.8L34 29"/><circle cx="14" cy="11.5" r="3.1"/><rect x="3" y="5" width="34" height="30" rx="6"/></svg>
+          </span>
+        </span>
+        <span class="catcard__chapa">omelete</span>
+      </button>
+      <button class="catcard" type="button" data-catcard
+              data-alvo="#cat-sucos" data-cor="#640000" data-nome="sucos" data-linha="copo cheio pra descer junto"
+              data-fundo="assets/img/categorias/sucos-fundo.jpg">
+        <span class="catcard__foto">
+          <picture><source type="image/webp" data-srcset="assets/img/categorias/sucos-320.webp 320w, assets/img/categorias/sucos-480.webp 480w, assets/img/categorias/sucos.webp 640w" sizes="(max-width: 860px) 145px, 235px"><img data-src="assets/img/categorias/sucos.jpg" alt="" decoding="async"></picture>
+          <span class="catcard__reserva" aria-hidden="true">
+            <svg viewBox="0 0 40 40"><path d="M6 27.5 14.2 18l6.4 7.2 4.6-4.8L34 29"/><circle cx="14" cy="11.5" r="3.1"/><rect x="3" y="5" width="34" height="30" rx="6"/></svg>
+          </span>
+        </span>
+        <span class="catcard__chapa">sucos</span>
+      </button>
+      <button class="catcard" type="button" data-catcard
+              data-alvo="#cat-bebidas" data-cor="#097500" data-nome="bebidas" data-linha="água, refri e o que mais matar a sede"
+              data-fundo="assets/img/categorias/bebidas-fundo.jpg">
+        <span class="catcard__foto">
+          <picture><source type="image/webp" data-srcset="assets/img/categorias/bebidas-320.webp 320w, assets/img/categorias/bebidas-480.webp 480w, assets/img/categorias/bebidas.webp 640w" sizes="(max-width: 860px) 145px, 235px"><img data-src="assets/img/categorias/bebidas.jpg" alt="" decoding="async"></picture>
+          <span class="catcard__reserva" aria-hidden="true">
+            <svg viewBox="0 0 40 40"><path d="M6 27.5 14.2 18l6.4 7.2 4.6-4.8L34 29"/><circle cx="14" cy="11.5" r="3.1"/><rect x="3" y="5" width="34" height="30" rx="6"/></svg>
+          </span>
+        </span>
+        <span class="catcard__chapa">bebidas</span>
+      </button>
+    </div>
+
+    <span class="palco__vinheta" aria-hidden="true"></span>
+
+    <div class="palco__pe">
+      <div class="palco__info">
+        <p class="palco__conta"><b id="palcoConta">01</b><i aria-hidden="true">/</i>09</p>
+        <h3 class="palco__nome" id="palcoNome">açaí</h3>
+        <p class="palco__linha" id="palcoLinha">pesado na balança, montado do seu jeito</p>
+      </div>
+      <button class="palco__ir" id="palcoIr" type="button">
+        <span>abrir o cardápio</span>
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+      </button>
+    </div>
+
+    <p class="palco__dica" aria-hidden="true">arraste ou toque numa categoria</p>
+  </div>
+</section>
+
+<!-- ===========================================================
+     PARTE 4 — delivery. Três canais, e um selo que diz se a moto
+     está na rua AGORA. A loja fecha às 23h mas a entrega para
+     antes: 22h40 de segunda a sexta, 21h40 no fim de semana.
+     O WhatsApp vem primeiro de propósito — é o único caminho sem
+     comissão de aplicativo, e é onde o carrinho já montado chega
+     escrito. Os apps ficam como alternativa, não como igual.
+     =========================================================== -->
+<section class="entrega" id="delivery">
+
+  <div class="entrega__cabecalho" data-revela>
+    <p class="sobrancelha"><i aria-hidden="true"></i>delivery</p>
+    <h2 class="titulo" aria-label="recebe em casa">
+      <span class="ln" aria-hidden="true">recebe</span>
+      <span class="ln" aria-hidden="true">em casa</span>
+    </h2>
+    <p class="selo" id="entregaSelo" data-estado="aguarde" role="status" aria-live="polite">
+      <span class="selo__luz" aria-hidden="true"></span>
+      <span id="entregaSeloTxt">conferindo o horário&#8230;</span>
+    </p>
+  </div>
+
+  <div class="entrega__canais" data-revela>
+
+    <a class="canal canal--zap" id="canalZap" href="https://wa.me/5585994077570?text=Oi!%20Queria%20saber%20da%20entrega%20%F0%9F%9B%B5" target="_blank" rel="noopener">
+      <span class="canal__ico" aria-hidden="true">
+        <svg viewBox="0 0 24 24"><path d="M7.9 20A9 9 0 1 0 4 16.1L2 22z"/></svg>
+      </span>
+      <span class="canal__corpo">
+        <b class="canal__nome">pedir direto no whatsapp</b>
+        <span class="canal__linha">sem taxa de aplicativo — a taxa de entrega a gente
+          combina na conversa</span>
+      </span>
+      <span class="canal__seta" aria-hidden="true">
+        <svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+      </span>
+    </a>
+
+    <p class="entrega__ou"><span>ou peça pelos aplicativos</span></p>
+
+    <div class="entrega__apps">
+      <a class="canal canal--app" href="https://www.ifood.com.br/delivery/fortaleza-ce/love-acai-parque-dois-irmaos/65585f08-4534-4d7c-89d9-6758075fe531" target="_blank" rel="noopener">
+        <span class="canal__marca canal__marca--ifood" aria-hidden="true">iFood</span>
+        <span class="canal__corpo">
+          <b class="canal__nome">peça pelo iFood</b>
+          <span class="canal__linha">entrega e pagamento pelo app</span>
+        </span>
+        <span class="canal__seta" aria-hidden="true">
+          <svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+        </span>
+      </a>
+
+      <a class="canal canal--app" href="https://oia.99app.com/dlp9/I2vDAZ" target="_blank" rel="noopener">
+        <span class="canal__marca canal__marca--99" aria-hidden="true">99Food</span>
+        <span class="canal__corpo">
+          <b class="canal__nome">peça pelo 99Food</b>
+          <span class="canal__linha">entrega e pagamento pelo app</span>
+        </span>
+        <span class="canal__seta" aria-hidden="true">
+          <svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+        </span>
+      </a>
+    </div>
+  </div>
+
+  <div class="entrega__pe" data-revela>
+    <ul class="horas">
+      <li class="hora" data-dia="semana">
+        <b>segunda a sexta</b><span>18h30 &mdash; 22h40</span>
+      </li>
+      <li class="hora" data-dia="fds">
+        <b>sábado e domingo</b><span>18h30 &mdash; 21h40</span>
+      </li>
+    </ul>
+    <a class="entrega__fone" href="tel:+558532143364">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6.5 3.5h3l1.5 4-2 1.5a12 12 0 0 0 6 6l1.5-2 4 1.5v3a2 2 0 0 1-2.2 2A16.5 16.5 0 0 1 4.5 5.7 2 2 0 0 1 6.5 3.5z"/></svg>
+      <span>(85) 3214-3364</span>
+    </a>
+  </div>
+
+</section>
+
+<!-- ===========================================================
+     COMO CHEGAR — a última seção.
+     O ponto do mapa vive em data-lat / data-lon aqui embaixo, num
+     lugar só: se a loja não estiver exatamente nesse ponto, é ali
+     que se corrige (e o link de rota nem usa coordenada, usa o
+     nome + endereço, pra deixar o Google resolver com o dado dele).
+     A distância é calculada no próprio aparelho do visitante — a
+     localização dele não é enviada pra lugar nenhum.
+     =========================================================== -->
+<section class="mapa" id="mapa" data-lat="-3.7989303" data-lon="-38.5456337">
+
+  <div class="mapa__texto" data-revela>
+    <p class="sobrancelha"><i aria-hidden="true"></i>como chegar</p>
+    <h2 class="titulo" aria-label="a gente fica aqui">
+      <span class="ln" aria-hidden="true">a gente</span>
+      <span class="ln" aria-hidden="true">fica aqui</span>
+    </h2>
+
+    <address class="mapa__endereco">
+      <b>Parque 2 Irmãos</b>
+      Av. Norte e Sul, Cj. Jardim Primavera<br>
+      Fortaleza — CE, 60743-760
+    </address>
+
+    <div class="mapa__acoes">
+      <a class="mapa__rota" href="https://www.google.com/maps/dir/?api=1&amp;destination=Love%20A%C3%A7a%C3%AD%2C%20Av.%20Norte%20e%20Sul%2C%20Parque%20Dois%20Irm%C3%A3os%2C%20Fortaleza%20-%20CE" target="_blank" rel="noopener">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21c-4.5-4.6-7-7.7-7-10.6A7 7 0 0 1 19 10.4c0 2.9-2.5 6-7 10.6z"/><circle cx="12" cy="10" r="2.6"/></svg>
+        traçar a rota
+      </a>
+      <button class="mapa__perto" id="mapaPerto" type="button">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3"/><circle cx="12" cy="12" r="8"/></svg>
+        quanto falta daqui?
+      </button>
+    </div>
+
+    <p class="mapa__saida" id="mapaSaida" role="status" aria-live="polite"></p>
+    <p class="mapa__nota">A conta é feita no seu aparelho — sua localização não sai dele.</p>
+  </div>
+
+  <figure class="mapa__quadro" data-revela>
+    <iframe
+      title="Mapa da região da loja, na Av. Norte e Sul"
+      loading="lazy"
+      referrerpolicy="no-referrer"
+      src="https://www.openstreetmap.org/export/embed.html?bbox=-38.55183%2C-3.80513%2C-38.53943%2C-3.79273&amp;layer=mapnik&amp;marker=-3.7989303%2C-38.5456337"></iframe>
+    <figcaption>
+      <a href="https://www.openstreetmap.org/?mlat=-3.7989303&amp;mlon=-38.5456337#map=16/-3.7989303/-38.5456337" target="_blank" rel="noopener">abrir o mapa maior</a>
+    </figcaption>
+  </figure>
+
+</section>
+</main>
+
+<nav class="dock" id="dock" aria-label="Navegação rápida">
+  <div class="dock__bar">
+    <a class="dock__btn is-active" href="#hero" data-ir>
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 12h18a9 9 0 0 1-18 0z"/><path d="M7 21h10"/><path d="M8.5 12a3.5 3.5 0 1 1 7 0"/><path d="M15 12a2.5 2.5 0 1 1 5 0"/></svg>
+      <span class="dock__tip">o açaí</span>
+    </a>
+    <a class="dock__btn" href="#loja" data-ir>
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21c-4.5-4.6-7-7.7-7-10.6A7 7 0 0 1 19 10.4c0 2.9-2.5 6-7 10.6z"/><circle cx="12" cy="10" r="2.6"/></svg>
+      <span class="dock__tip">a loja</span>
+    </a>
+    <a class="dock__btn" href="#cardapio" data-ir>
+      <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="3.5" width="16" height="17" rx="3"/><path d="M8 8.5h8M8 12h8M8 15.5h5"/></svg>
+      <span class="dock__tip">cardápio</span>
+    </a>
+
+    <span class="dock__sep" aria-hidden="true"></span>
+
+    <a class="dock__btn" href="#delivery" data-ir>
+      <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="18.5" cy="17.5" r="3.5"/><circle cx="5.5" cy="17.5" r="3.5"/><circle cx="15" cy="5" r="1"/><path d="M12 17.5V14l-3-3 4-3 2 3h2"/></svg>
+      <span class="dock__tip">delivery</span>
+    </a>
+    <a class="dock__btn" href="#mapa" data-ir>
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m9 4-6 2.5v13L9 17l6 3 6-2.5v-13L15 7z"/><path d="M9 4v13M15 7v13"/></svg>
+      <span class="dock__tip">localização</span>
+    </a>
+    <a class="dock__btn dock__btn--zap" href="https://wa.me/5585994077570?text=Oi!%20Quero%20fazer%20um%20pedido%20%F0%9F%92%9C" target="_blank" rel="noopener">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7.9 20A9 9 0 1 0 4 16.1L2 22z"/></svg>
+      <span class="dock__tip">fazer pedido</span>
+    </a>
+  </div>
+</nav>
+
+<!-- ===========================================================
+     CARRINHO — barra flutuante + gaveta. Some quando vazio,
+     desliza acima do dock assim que o primeiro item entra.
+     =========================================================== -->
+
+<!-- ===========================================================
+     CARDÁPIO ABERTO — o painel imersivo de uma categoria.
+     Mora aqui fora, na raiz, porque dentro de .cardapio (z-index 2)
+     ele jamais passaria por cima do cabeçalho fixo. A superfície que
+     cresce do card até a tela inteira é a .morfo; o conteúdo entra
+     depois, por cima dela.
+     =========================================================== -->
+<div class="morfo" id="morfo" aria-hidden="true"></div>
+
+<section class="dcat" id="dcat" aria-label="Categoria aberta" aria-modal="true" role="dialog" tabindex="-1">
+  <span class="dcat__fundo" aria-hidden="true"><span></span><span></span></span>
+
+  <header class="dcat__topo">
+    <button class="dcat__voltar" id="dcatVoltar" type="button">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M19 12H5M11 18l-6-6 6-6"/></svg>
+      voltar
+    </button>
+    <p class="dcat__conta"><b id="dcatConta">01</b><i aria-hidden="true">/</i>09</p>
+    <h3 class="dcat__nome" id="dcatNome">açaí</h3>
+    <p class="dcat__linha" id="dcatLinha">pesado na balança, montado do seu jeito</p>
+  </header>
+
+  <nav class="dtrilho" id="dtrilho" aria-label="Trocar de categoria">
+    <div class="dtrilho__pista">
+      <button class="dtrilho__pil" type="button" data-vai="0">açaí</button>
+      <button class="dtrilho__pil" type="button" data-vai="1">sanduíche natural</button>
+      <button class="dtrilho__pil" type="button" data-vai="2">sanduíche artesanal</button>
+      <button class="dtrilho__pil" type="button" data-vai="3">wraps</button>
+      <button class="dtrilho__pil" type="button" data-vai="4">saladas</button>
+      <button class="dtrilho__pil" type="button" data-vai="5">sopas</button>
+      <button class="dtrilho__pil" type="button" data-vai="6">omelete</button>
+      <button class="dtrilho__pil" type="button" data-vai="7">sucos</button>
+      <button class="dtrilho__pil" type="button" data-vai="8">bebidas</button>
+    </div>
+  </nav>
+
+  <div class="dcat__corpo" id="dcatCorpo">
+      <div class="produtos__grupo" id="cat-acai">
+        <div class="produto-acai">
+          <p>Aqui o açaí é pesado — não tem tamanho fechado. O valor certinho sai na
+            balança, na hora do pedido.</p>
+          <p>Pra montar o seu do jeito que gosta, chama a gente no WhatsApp que a
+            gente ajuda a escolher.</p>
+          <a class="btn-zap" href="https://wa.me/5585994077570?text=Oi!%20Quero%20montar%20um%20a%C3%A7a%C3%AD%20%F0%9F%92%9C" target="_blank" rel="noopener">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7.9 20A9 9 0 1 0 4 16.1L2 22z"/></svg>
+            montar açaí no whatsapp
+          </a>
+        </div>
+      </div>
+
+      <div class="produtos__grupo" id="cat-sanduiche-natural">
+        <div class="produtos__cabecalho">
+          <span class="produtos__preco">R$ 16,00 <small>cada</small></span>
+        </div>
+        <p class="produtos__base">Pão integral, salada de alface americana, cenoura
+          ralada, espaguete de abobrinha e molho de limão com ervas.</p>
+
+        <div class="produtos__lista">
+          <article class="produto" data-id="sn-frango" data-nome="Sanduíche Natural — Frango" data-preco="16.00">
+            <h4 class="produto__nome">frango</h4>
+            <p class="produto__desc">Patê "Made In Love" de frango.</p>
+            <div class="produto__acao">
+              <button class="produto__add" type="button">adicionar</button>
+              <div class="stepper" hidden>
+                <button type="button" data-menos aria-label="Diminuir">−</button>
+                <span class="stepper__valor">1</span>
+                <button type="button" data-mais aria-label="Aumentar">+</button>
+              </div>
+            </div>
+          </article>
+
+          <article class="produto" data-id="sn-frango-atum" data-nome="Sanduíche Natural — Frango com Atum" data-preco="16.00">
+            <h4 class="produto__nome">frango com atum</h4>
+            <p class="produto__desc">Patê "Made In Love" de frango com atum.</p>
+            <div class="produto__acao">
+              <button class="produto__add" type="button">adicionar</button>
+              <div class="stepper" hidden>
+                <button type="button" data-menos aria-label="Diminuir">−</button>
+                <span class="stepper__valor">1</span>
+                <button type="button" data-mais aria-label="Aumentar">+</button>
+              </div>
+            </div>
+          </article>
+        </div>
+      </div>
+
+      <div class="produtos__grupo" id="cat-sanduiche-artesanal">
+        <div class="produtos__cabecalho">
+          <span class="produtos__preco">R$ 18,00 <small>cada</small></span>
+        </div>
+        <p class="produtos__base">Pão integral artesanal.</p>
+
+        <div class="produtos__lista">
+          <article class="produto" data-id="sa-bacurim" data-nome="Sanduíche Artesanal — Bacurim" data-preco="18.00">
+            <h4 class="produto__nome">bacurim</h4>
+            <p class="produto__desc">Lombo suíno desfiado, tomate confit, alface
+              americana e cenoura ralada.</p>
+            <div class="produto__acao">
+              <button class="produto__add" type="button">adicionar</button>
+              <div class="stepper" hidden>
+                <button type="button" data-menos aria-label="Diminuir">−</button>
+                <span class="stepper__valor">1</span>
+                <button type="button" data-mais aria-label="Aumentar">+</button>
+              </div>
+            </div>
+          </article>
+
+          <article class="produto" data-id="sa-franpesto" data-nome="Sanduíche Artesanal — Franpesto" data-preco="18.00">
+            <h4 class="produto__nome">franpesto</h4>
+            <p class="produto__desc">Frango com cream cheese, molho pesto, alface
+              americana e cenoura ralada.</p>
+            <div class="produto__acao">
+              <button class="produto__add" type="button">adicionar</button>
+              <div class="stepper" hidden>
+                <button type="button" data-menos aria-label="Diminuir">−</button>
+                <span class="stepper__valor">1</span>
+                <button type="button" data-mais aria-label="Aumentar">+</button>
+              </div>
+            </div>
+          </article>
+
+          <article class="produto" data-id="sa-nordestino" data-nome="Sanduíche Artesanal — Nordestino" data-preco="18.00">
+            <h4 class="produto__nome">nordestino</h4>
+            <p class="produto__desc">Carne do sol desfiada com cream cheese,
+              maionese, cebola crispy e alface americana.</p>
+            <div class="produto__acao">
+              <button class="produto__add" type="button">adicionar</button>
+              <div class="stepper" hidden>
+                <button type="button" data-menos aria-label="Diminuir">−</button>
+                <span class="stepper__valor">1</span>
+                <button type="button" data-mais aria-label="Aumentar">+</button>
+              </div>
+            </div>
+          </article>
+        </div>
+      </div>
+
+      <div class="produtos__grupo" id="cat-wraps">
+        <div class="produtos__cabecalho">
+          <span class="produtos__preco">R$ 18,00 <small>cada</small></span>
+        </div>
+        <p class="produtos__base">Massa integral, salada de alface americana,
+          cenoura ralada, espaguete de abobrinha e molho de limão com ervas.</p>
+
+        <div class="produtos__lista">
+          <article class="produto" data-id="wp-carne-sol" data-nome="Wrap — Carne do Sol" data-preco="18.00">
+            <h4 class="produto__nome">carne do sol</h4>
+            <p class="produto__desc">Cream cheese de carne do sol com azeitona.</p>
+            <div class="produto__acao">
+              <button class="produto__add" type="button">adicionar</button>
+              <div class="stepper" hidden>
+                <button type="button" data-menos aria-label="Diminuir">−</button>
+                <span class="stepper__valor">1</span>
+                <button type="button" data-mais aria-label="Aumentar">+</button>
+              </div>
+            </div>
+          </article>
+
+          <article class="produto" data-id="wp-frango" data-nome="Wrap — Frango" data-preco="18.00">
+            <h4 class="produto__nome">frango</h4>
+            <p class="produto__desc">Cream cheese de frango com azeitona.</p>
+            <div class="produto__acao">
+              <button class="produto__add" type="button">adicionar</button>
+              <div class="stepper" hidden>
+                <button type="button" data-menos aria-label="Diminuir">−</button>
+                <span class="stepper__valor">1</span>
+                <button type="button" data-mais aria-label="Aumentar">+</button>
+              </div>
+            </div>
+          </article>
+
+          <article class="produto" data-id="wp-suino" data-nome="Wrap — Suíno" data-preco="18.00">
+            <h4 class="produto__nome">suíno</h4>
+            <p class="produto__desc">Carne suína, tomate confit e barbecue.</p>
+            <div class="produto__acao">
+              <button class="produto__add" type="button">adicionar</button>
+              <div class="stepper" hidden>
+                <button type="button" data-menos aria-label="Diminuir">−</button>
+                <span class="stepper__valor">1</span>
+                <button type="button" data-mais aria-label="Aumentar">+</button>
+              </div>
+            </div>
+          </article>
+        </div>
+      </div>
+
+      <div class="produtos__grupo" id="cat-saladas">
+        <div class="produtos__cabecalho">
+          <span class="produtos__preco">R$ 22,00 <small>cada</small></span>
+        </div>
+        <p class="produtos__base">100g de proteína, alface, cenoura, espaguete de
+          abobrinha, tomate confit, castanha, uva passa e molho pesto.</p>
+
+        <div class="produtos__lista">
+          <article class="produto" data-id="sd-carne-sol" data-nome="Salada — Carne do Sol" data-preco="22.00">
+            <h4 class="produto__nome">carne do sol</h4>
+            <div class="produto__acao">
+              <button class="produto__add" type="button">adicionar</button>
+              <div class="stepper" hidden>
+                <button type="button" data-menos aria-label="Diminuir">−</button>
+                <span class="stepper__valor">1</span>
+                <button type="button" data-mais aria-label="Aumentar">+</button>
+              </div>
+            </div>
+          </article>
+
+          <article class="produto" data-id="sd-frango" data-nome="Salada — Frango" data-preco="22.00">
+            <h4 class="produto__nome">frango</h4>
+            <div class="produto__acao">
+              <button class="produto__add" type="button">adicionar</button>
+              <div class="stepper" hidden>
+                <button type="button" data-menos aria-label="Diminuir">−</button>
+                <span class="stepper__valor">1</span>
+                <button type="button" data-mais aria-label="Aumentar">+</button>
+              </div>
+            </div>
+          </article>
+
+          <article class="produto" data-id="sd-suina" data-nome="Salada — Suína" data-preco="22.00">
+            <h4 class="produto__nome">suína</h4>
+            <div class="produto__acao">
+              <button class="produto__add" type="button">adicionar</button>
+              <div class="stepper" hidden>
+                <button type="button" data-menos aria-label="Diminuir">−</button>
+                <span class="stepper__valor">1</span>
+                <button type="button" data-mais aria-label="Aumentar">+</button>
+              </div>
+            </div>
+          </article>
+        </div>
+      </div>
+
+      <div class="produtos__grupo" id="cat-sopas">
+        <div class="produtos__cabecalho">
+          <span class="produtos__preco">R$ 15,00</span>
+        </div>
+        <div class="produtos__lista produtos__lista--unico">
+          <article class="produto" data-id="sopa-dia" data-nome="Sopa do dia" data-preco="15.00">
+            <h4 class="produto__nome">sopa do dia</h4>
+            <p class="produto__desc">O sabor muda todo dia — a gente confirma qual
+              tem na conversa, antes de fechar.</p>
+            <div class="produto__acao">
+              <button class="produto__add" type="button">adicionar</button>
+              <div class="stepper" hidden>
+                <button type="button" data-menos aria-label="Diminuir">−</button>
+                <span class="stepper__valor">1</span>
+                <button type="button" data-mais aria-label="Aumentar">+</button>
+              </div>
+            </div>
+          </article>
+        </div>
+      </div>
+
+      <div class="produtos__grupo" id="cat-omelete">
+        <div class="produtos__cabecalho">
+          <span class="produtos__preco">R$ 20,00</span>
+        </div>
+        <div class="produtos__lista produtos__lista--unico">
+          <article class="produto produto--escolha" data-id="omelete" data-nome="Omelete" data-preco="20.00" data-base-nome="Omelete">
+            <h4 class="produto__nome">omelete</h4>
+            <p class="produto__desc">Acompanha salada com proteína — escolhe uma:</p>
+            <div class="escolha" role="radiogroup" aria-label="Proteína da salada">
+              <button type="button" class="escolha__pill" role="radio" aria-checked="false" data-valor="carne do sol">carne do sol</button>
+              <button type="button" class="escolha__pill" role="radio" aria-checked="false" data-valor="frango">frango</button>
+              <button type="button" class="escolha__pill" role="radio" aria-checked="false" data-valor="carne de porco">carne de porco</button>
+            </div>
+            <div class="produto__acao">
+              <button class="produto__add" type="button" disabled>escolhe a proteína</button>
+              <div class="stepper" hidden>
+                <button type="button" data-menos aria-label="Diminuir">−</button>
+                <span class="stepper__valor">1</span>
+                <button type="button" data-mais aria-label="Aumentar">+</button>
+              </div>
+            </div>
+          </article>
+        </div>
+      </div>
+
+      <div class="produtos__grupo" id="cat-sucos">
+        <div class="produtos__lista produtos__lista--densa">
+          <article class="produto produto--linha" data-id="suco-morango" data-nome="Suco de Morango" data-preco="8.00">
+            <h4 class="produto__nome">morango</h4>
+            <span class="produto__preco">R$ 8,00</span>
+            <div class="produto__acao">
+              <button class="produto__add" type="button">adicionar</button>
+              <div class="stepper" hidden>
+                <button type="button" data-menos aria-label="Diminuir">−</button>
+                <span class="stepper__valor">1</span>
+                <button type="button" data-mais aria-label="Aumentar">+</button>
+              </div>
+            </div>
+          </article>
+
+          <article class="produto produto--linha" data-id="suco-caja" data-nome="Suco de Cajá" data-preco="8.00">
+            <h4 class="produto__nome">cajá</h4>
+            <span class="produto__preco">R$ 8,00</span>
+            <div class="produto__acao">
+              <button class="produto__add" type="button">adicionar</button>
+              <div class="stepper" hidden>
+                <button type="button" data-menos aria-label="Diminuir">−</button>
+                <span class="stepper__valor">1</span>
+                <button type="button" data-mais aria-label="Aumentar">+</button>
+              </div>
+            </div>
+          </article>
+
+          <article class="produto produto--linha" data-id="suco-maracuja" data-nome="Suco de Maracujá" data-preco="8.00">
+            <h4 class="produto__nome">maracujá</h4>
+            <span class="produto__preco">R$ 8,00</span>
+            <div class="produto__acao">
+              <button class="produto__add" type="button">adicionar</button>
+              <div class="stepper" hidden>
+                <button type="button" data-menos aria-label="Diminuir">−</button>
+                <span class="stepper__valor">1</span>
+                <button type="button" data-mais aria-label="Aumentar">+</button>
+              </div>
+            </div>
+          </article>
+
+          <article class="produto produto--linha" data-id="suco-abacaxi" data-nome="Suco de Abacaxi" data-preco="7.00">
+            <h4 class="produto__nome">abacaxi</h4>
+            <span class="produto__preco">R$ 7,00</span>
+            <div class="produto__acao">
+              <button class="produto__add" type="button">adicionar</button>
+              <div class="stepper" hidden>
+                <button type="button" data-menos aria-label="Diminuir">−</button>
+                <span class="stepper__valor">1</span>
+                <button type="button" data-mais aria-label="Aumentar">+</button>
+              </div>
+            </div>
+          </article>
+
+          <article class="produto produto--linha" data-id="suco-abacaxi-hortela" data-nome="Suco de Abacaxi com Hortelã" data-preco="7.00">
+            <h4 class="produto__nome">abacaxi com hortelã</h4>
+            <span class="produto__preco">R$ 7,00</span>
+            <div class="produto__acao">
+              <button class="produto__add" type="button">adicionar</button>
+              <div class="stepper" hidden>
+                <button type="button" data-menos aria-label="Diminuir">−</button>
+                <span class="stepper__valor">1</span>
+                <button type="button" data-mais aria-label="Aumentar">+</button>
+              </div>
+            </div>
+          </article>
+
+          <article class="produto produto--linha" data-id="suco-abacaxi-kiwi" data-nome="Suco de Abacaxi com Kiwi" data-preco="7.00">
+            <h4 class="produto__nome">abacaxi com kiwi</h4>
+            <span class="produto__preco">R$ 7,00</span>
+            <div class="produto__acao">
+              <button class="produto__add" type="button">adicionar</button>
+              <div class="stepper" hidden>
+                <button type="button" data-menos aria-label="Diminuir">−</button>
+                <span class="stepper__valor">1</span>
+                <button type="button" data-mais aria-label="Aumentar">+</button>
+              </div>
+            </div>
+          </article>
+
+          <article class="produto produto--linha" data-id="suco-manga" data-nome="Suco de Manga" data-preco="7.00">
+            <h4 class="produto__nome">manga</h4>
+            <span class="produto__preco">R$ 7,00</span>
+            <div class="produto__acao">
+              <button class="produto__add" type="button">adicionar</button>
+              <div class="stepper" hidden>
+                <button type="button" data-menos aria-label="Diminuir">−</button>
+                <span class="stepper__valor">1</span>
+                <button type="button" data-mais aria-label="Aumentar">+</button>
+              </div>
+            </div>
+          </article>
+        </div>
+      </div>
+
+      <div class="produtos__grupo" id="cat-bebidas">
+        <div class="produtos__lista produtos__lista--densa">
+          <article class="produto produto--linha" data-id="bb-agua" data-nome="Água" data-preco="3.00">
+            <h4 class="produto__nome">água</h4>
+            <span class="produto__preco">R$ 3,00</span>
+            <div class="produto__acao">
+              <button class="produto__add" type="button">adicionar</button>
+              <div class="stepper" hidden>
+                <button type="button" data-menos aria-label="Diminuir">−</button>
+                <span class="stepper__valor">1</span>
+                <button type="button" data-mais aria-label="Aumentar">+</button>
+              </div>
+            </div>
+          </article>
+
+          <article class="produto produto--linha" data-id="bb-agua-gas" data-nome="Água com Gás" data-preco="3.50">
+            <h4 class="produto__nome">água com gás</h4>
+            <span class="produto__preco">R$ 3,50</span>
+            <div class="produto__acao">
+              <button class="produto__add" type="button">adicionar</button>
+              <div class="stepper" hidden>
+                <button type="button" data-menos aria-label="Diminuir">−</button>
+                <span class="stepper__valor">1</span>
+                <button type="button" data-mais aria-label="Aumentar">+</button>
+              </div>
+            </div>
+          </article>
+
+          <article class="produto produto--linha" data-id="bb-coca" data-nome="Coca-Cola" data-preco="5.00">
+            <h4 class="produto__nome">coca-cola</h4>
+            <span class="produto__preco">R$ 5,00</span>
+            <div class="produto__acao">
+              <button class="produto__add" type="button">adicionar</button>
+              <div class="stepper" hidden>
+                <button type="button" data-menos aria-label="Diminuir">−</button>
+                <span class="stepper__valor">1</span>
+                <button type="button" data-mais aria-label="Aumentar">+</button>
+              </div>
+            </div>
+          </article>
+
+          <article class="produto produto--linha" data-id="bb-coca-zero" data-nome="Coca-Cola Zero" data-preco="5.00">
+            <h4 class="produto__nome">coca-cola zero</h4>
+            <span class="produto__preco">R$ 5,00</span>
+            <div class="produto__acao">
+              <button class="produto__add" type="button">adicionar</button>
+              <div class="stepper" hidden>
+                <button type="button" data-menos aria-label="Diminuir">−</button>
+                <span class="stepper__valor">1</span>
+                <button type="button" data-mais aria-label="Aumentar">+</button>
+              </div>
+            </div>
+          </article>
+
+          <article class="produto produto--linha" data-id="bb-guarana" data-nome="Guaraná Lata" data-preco="5.00">
+            <h4 class="produto__nome">guaraná lata</h4>
+            <span class="produto__preco">R$ 5,00</span>
+            <div class="produto__acao">
+              <button class="produto__add" type="button">adicionar</button>
+              <div class="stepper" hidden>
+                <button type="button" data-menos aria-label="Diminuir">−</button>
+                <span class="stepper__valor">1</span>
+                <button type="button" data-mais aria-label="Aumentar">+</button>
+              </div>
+            </div>
+          </article>
+
+          <article class="produto produto--linha" data-id="bb-h2o" data-nome="H2O" data-preco="6.00">
+            <h4 class="produto__nome">h2o</h4>
+            <span class="produto__preco">R$ 6,00</span>
+            <div class="produto__acao">
+              <button class="produto__add" type="button">adicionar</button>
+              <div class="stepper" hidden>
+                <button type="button" data-menos aria-label="Diminuir">−</button>
+                <span class="stepper__valor">1</span>
+                <button type="button" data-mais aria-label="Aumentar">+</button>
+              </div>
+            </div>
+          </article>
+        </div>
+      </div>
+  </div>
+
+  <p class="sr" id="dcatAviso" role="status" aria-live="polite"></p>
+</section>
+
+<div class="carrinho" id="carrinho">
+  <button class="carrinho__barra" id="carrinhoAbre" aria-haspopup="true" aria-expanded="false" aria-controls="carrinhoGaveta">
+    <span class="carrinho__conta" id="carrinhoConta" aria-live="polite">0</span>
+    <span class="carrinho__rotulo">ver pedido</span>
+    <span class="carrinho__total" id="carrinhoBarraTotal">R$ 0,00</span>
+  </button>
+
+  <div class="carrinho__veu" id="carrinhoVeu"></div>
+
+  <div class="carrinho__gaveta" id="carrinhoGaveta" role="region" aria-label="Seu pedido">
+    <div class="carrinho__topo">
+      <h3>seu pedido</h3>
+      <button class="carrinho__fechar" id="carrinhoFecha" type="button" aria-label="Fechar pedido">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>
+      </button>
+    </div>
+
+    <p class="carrinho__vazio" id="carrinhoVazio">
+      Ainda não tem nada aqui. <a href="#cardapio" data-ir>Dá uma olhada no cardápio →</a>
+    </p>
+
+    <ul class="carrinho__itens" id="carrinhoItens"></ul>
+
+    <div class="carrinho__rodape" id="carrinhoRodape">
+      <div class="carrinho__linha">
+        <span>subtotal</span>
+        <span id="carrinhoSubtotal">R$ 0,00</span>
+      </div>
+      <label class="carrinho__obs-rotulo" for="carrinhoObs">observação (opcional)</label>
+      <textarea class="carrinho__obs" id="carrinhoObs" rows="2" placeholder="ex.: sem cebola, troco pra R$ 50..."></textarea>
+      <a class="btn-zap carrinho__finalizar" id="carrinhoFinalizar" href="#" target="_blank" rel="noopener">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7.9 20A9 9 0 1 0 4 16.1L2 22z"/></svg>
+        finalizar no whatsapp
+      </a>
+    </div>
+  </div>
+</div>
+
+<script src="assets/js/main.js"></script>
+</body>
+</html>
