@@ -34,6 +34,9 @@
   --ease-settle: cubic-bezier(.18,.9,.24,1);
   --ease-leave:  cubic-bezier(.55,0,.8,.2);
   --ease-carrossel: cubic-bezier(.4,0,.2,1);
+  /* tempo da troca de categoria. O JS lê esta mesma variável pra saber
+     quanto dura a trava, então os dois nunca saem de sincronia. */
+  --t-troca: .42s;
   --ease-morfo: cubic-bezier(.22,1,.36,1);   /* cresce: arranca e pousa */
   --ease-volta: cubic-bezier(.36,0,.22,1);   /* encolhe: sai na hora */
 }
@@ -783,7 +786,7 @@ a{ color:inherit; text-decoration:none; }
   overflow:hidden;
   isolation:isolate;
   background-color:var(--roxo);
-  transition:background-color .42s var(--ease-carrossel);
+  transition:background-color var(--t-troca) var(--ease-carrossel);
   -webkit-user-select:none; user-select:none;
   touch-action:pan-y;                    /* o dedo ainda rola a página */
 }
@@ -868,11 +871,11 @@ a{ color:inherit; text-decoration:none; }
   transform:translateX(-50%) scale(1);
   opacity:1; z-index:5;
   cursor:pointer;
-  transition:transform .42s var(--ease-carrossel),
-             opacity   .42s var(--ease-carrossel),
-             left      .42s var(--ease-carrossel),
-             bottom    .42s var(--ease-carrossel),
-             height    .42s var(--ease-carrossel);
+  transition:transform var(--t-troca) var(--ease-carrossel),
+             opacity   var(--t-troca) var(--ease-carrossel),
+             left      var(--t-troca) var(--ease-carrossel),
+             bottom    var(--t-troca) var(--ease-carrossel),
+             height    var(--t-troca) var(--ease-carrossel);
   will-change:transform, opacity;
 }
 .catcard__foto{
@@ -888,7 +891,7 @@ a{ color:inherit; text-decoration:none; }
   border:1px solid rgba(255,248,229,.3);
   box-shadow:0 26px 58px rgba(28,5,24,.36);
   filter:blur(var(--desfoque,0px));
-  transition:filter .2s ease-out, box-shadow .42s var(--ease-carrossel),
+  transition:filter .2s ease-out, box-shadow var(--t-troca) var(--ease-carrossel),
              border-color .3s ease;
 }
 /* o <picture> entrou no meio, então o img não é mais filho direto */
@@ -960,7 +963,7 @@ a{ color:inherit; text-decoration:none; }
 .catcard[data-papel="fora"] .catcard__foto{ --desfoque:5px; }
 /* saindo de cena eles só apagam; a geometria não precisa ser animada pra
    ninguém ver. Entrando, quem manda é a transição do papel novo. */
-.catcard[data-papel="fora"]{ transition:opacity .42s var(--ease-carrossel), transform .42s var(--ease-carrossel); }
+.catcard[data-papel="fora"]{ transition:opacity var(--t-troca) var(--ease-carrossel), transform var(--t-troca) var(--ease-carrossel); }
 
 .catcard:not([data-papel="centro"]):hover{ transform:translateX(-50%) scale(1.07); }
 .catcard:not([data-papel="centro"]):hover .catcard__foto{
@@ -1498,6 +1501,9 @@ a{ color:inherit; text-decoration:none; }
 
 @media (max-width:860px){
   :root{
+    /* o dedo empurra o cartão diretamente: manipulação direta pede resposta
+       mais curta que um clique no cartão vizinho */
+    --t-troca:.28s;
     --stage-pad:clamp(18px,5vw,30px);
     --nav-h:clamp(64px,15vw,78px);
     --dock-h:clamp(74px,17vw,86px);

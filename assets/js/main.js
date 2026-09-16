@@ -449,9 +449,17 @@
     const elIr     = document.getElementById('palcoIr');
     const marca    = palco.querySelector('.palco__marca');
     const total    = cards.length;
-    const TROCA    = reduced ? 0 : 420;   /* mesmo tempo da transição no CSS */
-    let indice = 0, girando = false, arrastou = false;
+    let indice = 0, girando = false, arrastou = false, pendente = 0, relogioGira = 0;
     const raizDoc = document.documentElement;
+    /* Lê a duração do próprio CSS em vez de repetir o número aqui. Assim a
+       troca mais curta do celular vale pros dois lados, e continua valendo
+       se a tela mudar de tamanho no meio do caminho. */
+    const troca = () => {
+      if (reduced) return 0;
+      const v = getComputedStyle(raizDoc).getPropertyValue('--t-troca').trim();
+      const n = parseFloat(v) || 0.42;
+      return v.endsWith('ms') ? n : n * 1000;
+    };
     const dcatEl = document.getElementById('dcat');
     let aplicaFundo = () => {};
 
@@ -592,11 +600,22 @@
     };
 
     const gira = (passo) => {
-      if (girando || !passo || palcoCena() !== 'vitrine') return;
+      if (!passo || palcoCena() !== 'vitrine') return;
+      /* Um pedido que chega no meio da troca era simplesmente descartado, e
+         quem passa três categorias de uma vez via a terceira sumir. Guardar
+         o último e aplicar assim que a trava solta faz o carrossel
+         acompanhar o dedo em vez de ignorá-lo. */
+      if (girando) { pendente = Math.max(-4, Math.min(4, pendente + passo)); return; }
       girando = true;
       indice = ((indice + passo) % total + total) % total;
       desenha(passo > 0 ? 1 : -1);
-      setTimeout(() => { girando = false; }, TROCA);
+      clearTimeout(relogioGira);
+      relogioGira = setTimeout(() => {
+        girando = false;
+        /* um degrau por vez: quem deu três swipes vê as três categorias
+           passarem, em vez de um salto seco de três de uma vez */
+        if (pendente) { const p = pendente > 0 ? 1 : -1; pendente -= p; gira(p); }
+      }, troca());
     };
 
     /* o clique é na categoria, não numa seta */
@@ -623,7 +642,11 @@
       const dx = e.clientX - x0, dy = e.clientY - y0;
       /* se o movimento é mais vertical que horizontal, é rolagem de página */
       if (Math.abs(dy) > Math.abs(dx) && Math.abs(dy) > 12) { seguindo = false; return; }
-      if (Math.abs(dx) < 48) return;
+      /* 48px é meio centímetro de dedo antes de qualquer resposta — no
+         toque isso lê como travamento. Com mouse o limiar alto continua
+         valendo, pra arrasto acidental não virar troca de categoria. */
+      const limiar = matchMedia('(pointer:fine)').matches ? 48 : 28;
+      if (Math.abs(dx) < limiar) return;
       seguindo = false; arrastou = true;
       gira(dx < 0 ? +1 : -1);
     });
