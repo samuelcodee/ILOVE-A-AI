@@ -14,6 +14,32 @@
   };
   toggle.addEventListener('click', () => setMenu(!links.classList.contains('is-open')));
 
+  /* ---------- quanto o cabeçalho e o dock realmente ocupam ----------
+     Os dois tinham a altura chutada num clamp(). No celular o cabeçalho
+     quebra em duas linhas e fica 28px mais alto que o chute, e era por isso
+     que ele encostava no painel do hero — e o painel, por sua vez, terminava
+     exatamente na borda do dock. Aqui a altura é medida e ainda ganha uma
+     folga, pra nenhuma das duas peças flutuantes chegar perto do conteúdo. */
+  const raizEl = document.documentElement;
+  const medeCromo = () => {
+    const cab = document.querySelector('.nav');
+    const barra = document.querySelector('.dock__bar');
+    /* com o menu aberto o cabeçalho cresce; essa altura não é a que vale */
+    if (cab && !cab.querySelector('.nav__links.is-open')) {
+      raizEl.style.setProperty('--nav-h',
+        Math.ceil(cab.getBoundingClientRect().height) + 14 + 'px');
+    }
+    if (barra) {
+      const desdeABase = parseFloat(getComputedStyle(barra.parentElement).bottom) || 0;
+      raizEl.style.setProperty('--dock-h',
+        Math.ceil(barra.getBoundingClientRect().height + desdeABase) + 16 + 'px');
+    }
+  };
+  medeCromo();
+  addEventListener('resize', medeCromo);
+  /* a fonte da marca chega depois e muda a altura do cabeçalho */
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(medeCromo);
+
   /* ---------- letras dos títulos ----------
      Cada letra entra girada e deslocada e assenta no lugar. O atraso cresce
      da última letra para a primeira, então a frase se monta de trás pra frente. */
@@ -238,6 +264,11 @@
     };
     addEventListener('touchstart', destrava, { once: true, passive: true });
     addEventListener('pointerdown', destrava, { once: true, passive: true });
+    /* e o mesmo toque devolve qualquer reel que tenha ficado pra trás */
+    const destravaReels = () => document.querySelectorAll('.reel video').forEach((v) => {
+      if (!v.dataset.src && v.getAttribute('src') && v.paused) v.play().catch(() => {});
+    });
+    addEventListener('touchstart', destravaReels, { once: true, passive: true });
   }
 
   /* ---------- a seção da loja ----------
@@ -254,15 +285,38 @@
         revelaveis.splice(i, 1);
         // só agora vale baixar o vídeo da seção: quem não desce não paga por ele
         el.querySelectorAll('video[data-src]').forEach((v) => {
+          /* com preload="none" o play() logo depois do src é pedir play num
+             elemento que ainda não tem um único quadro; pedir de novo quando
+             o primeiro quadro chega é o que torna o começo confiável */
+          v.preload = 'auto';
           v.src = v.dataset.src;
           v.removeAttribute('data-src');
-          if (!reduced) v.play().catch(() => {});
+          if (reduced) return;
+          const tenta = () => v.play().catch(() => {});
+          tenta();
+          v.addEventListener('loadeddata', tenta, { once: true });
         });
         el.querySelectorAll('iframe[data-src]').forEach((f) => {
           f.src = f.dataset.src;
           f.removeAttribute('data-src');
         });
       }
+    }
+  };
+
+  /* Um vídeo de seção que está na tela e parado tenta de novo — é o que
+     conserta o reel congelado quando o primeiro play() foi recusado. O que
+     saiu da tela pausa: vídeo em laço fora de vista é bateria queimada à
+     toa, e no celular isso pesa mais que em qualquer outro lugar. */
+  const reels = [...document.querySelectorAll('.reel video')];
+  const cuidaDosReels = () => {
+    if (reduced) return;
+    for (const v of reels) {
+      if (v.dataset.src || !v.getAttribute('src')) continue;
+      const r = v.getBoundingClientRect();
+      const naTela = r.bottom > 0 && r.top < innerHeight;
+      if (naTela) { if (v.paused) v.play().catch(() => {}); }
+      else if (!v.paused) v.pause();
     }
   };
 
@@ -1056,7 +1110,7 @@
     if (ticking) return;
     ticking = true;
     requestAnimationFrame(() => {
-      arrasta(); revela(); desliza(); marcaZona();
+      arrasta(); revela(); desliza(); marcaZona(); cuidaDosReels();
       ticking = false;
     });
   };
@@ -1128,5 +1182,5 @@
     });
   });
 
-  arrasta(); revela(); desliza(); marcaZona(); pinta();
+  arrasta(); revela(); desliza(); marcaZona(); cuidaDosReels(); pinta();
 })();
