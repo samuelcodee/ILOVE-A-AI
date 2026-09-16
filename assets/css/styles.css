@@ -43,6 +43,15 @@
 
 *,*::before,*::after{ box-sizing:border-box; }
 
+/* Somar dois toques rápidos no "+" virava zoom da página inteira. Este valor
+   tira o duplo-toque-pra-ampliar e MANTÉM o zoom de pinça — quem enxerga
+   pouco depende da pinça, então user-scalable=no está fora de questão.
+
+   Precisa valer em todo elemento: touch-action NÃO é herdado, e quem decide
+   o gesto é o elemento embaixo do dedo. No html sozinho não protegia nada.
+   Regras mais específicas (o pan-y do carrossel) continuam vencendo. */
+body, body *{ touch-action:manipulation; }
+
 /* O iOS desenha um botão de play gigante por cima de qualquer vídeo que ele
    julgue "parado e pronto pra tocar" — e desenha mesmo sem o atributo
    controls. Aqui vídeo nenhum é coisa pra assistir: um é a animação presa ao
@@ -73,6 +82,7 @@ b, strong{ font-weight:600; }
 
 html{
   -webkit-text-size-adjust:100%;
+
   /* a barra de rolagem fica sempre reservada: sem isso, travar a página pra
      abrir uma categoria fazia o layout inteiro pular uns 15px pro lado */
   scrollbar-gutter:stable;
@@ -827,7 +837,11 @@ video.e-fonte{ opacity:0 !important; }
   background-color:var(--roxo);
   transition:background-color var(--t-troca) var(--ease-carrossel);
   -webkit-user-select:none; user-select:none;
-  touch-action:pan-y;                    /* o dedo ainda rola a página */
+  /* Aqui o arrasto horizontal é nosso (troca de categoria) e o vertical é da
+     página. "pan-y pinch-zoom" diz exatamente isso, e de quebra tira o
+     duplo-toque-pra-ampliar sem tirar a pinça — "manipulation" sozinho
+     devolveria o arrasto horizontal pro navegador. */
+  touch-action:pan-y pinch-zoom;
 }
 
 /* granulado por cima de tudo, pra cor chapada não ficar plástica */
@@ -899,6 +913,9 @@ video.e-fonte{ opacity:0 !important; }
 }
 
 /* ---------- o carrossel ---------- */
+/* o mesmo gesto vale pra superfície que recebe o dedo */
+.palco__carrossel, .catcard{ touch-action:pan-y pinch-zoom; }
+
 .palco__carrossel{ position:absolute; inset:0; z-index:3; cursor:grab; }
 .palco__carrossel:active{ cursor:grabbing; }
 
@@ -1521,7 +1538,10 @@ video.e-fonte{ opacity:0 !important; }
   border-radius:12px;
   border:1.4px solid rgba(142,36,122,.18);
   background:rgba(255,255,255,.55);
-  font:inherit; font-size:12.5px; color:var(--roxo-escuro);
+  font:inherit; color:var(--roxo-escuro);
+  /* 16px não é estética, é regra do iOS: abaixo disso ele amplia a página
+     inteira assim que o campo recebe o foco, e não dá pra desligar. */
+  font-size:16px;
   resize:vertical;
 }
 .carrinho__obs:focus{ outline:none; border-color:var(--roxo); background:#fff; }

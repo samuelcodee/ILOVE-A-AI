@@ -208,13 +208,37 @@
     const t0 = v.currentTime;
     setTimeout(() => {
       if (v.seeking || v.currentTime !== t0) return;      /* andou: tudo certo */
-      if (v.readyState < 2 && (tentativa || 0) < 4) {     /* ainda carregando */
+      if (v.readyState < 2 && (tentativa || 0) < 3) {     /* ainda carregando */
         return provaMovimento(v, planoB, (tentativa || 0) + 1);
       }
       try { v.pause(); } catch (e) {}
       naoAndou.add(v);
       planoB();
-    }, 520);
+    }, 260);
+  };
+
+  /* Em Baixo Consumo o iPhone demora pra decodificar, e a tela ficava no
+     poster enquanto a espera não terminava. Duas providências:
+
+     - pedir o primeiro quadro na marra assim que os metadados chegam. Uma
+       busca minúscula força a decodificação e a tela ganha imagem de
+       verdade, em vez de continuar no poster.
+     - conferir o movimento de novo no 'loadeddata': antes a conferência
+       acontecia uma vez só, cedo demais, e se o vídeo ainda não tinha
+       carregado a animação só começava no ciclo seguinte. */
+  const acordaQuadro = (v, planoB) => {
+    if (!v) return;
+    const primeiro = () => {
+      /* sem checar paused: o play() já marcou o elemento como tocando mesmo
+         quando o aparelho não vai tocar coisa nenhuma */
+      if (v.currentTime < 0.01 && v.readyState >= 1) {
+        try { v.currentTime = 0.04; } catch (e) {}
+      }
+      provaMovimento(v, planoB);
+    };
+    if (v.readyState >= 1) primeiro();
+    else v.addEventListener('loadedmetadata', primeiro, { once: true });
+    v.addEventListener('loadeddata', () => provaMovimento(v, planoB), { once: true });
   };
 
   const hero  = document.getElementById('hero');
@@ -388,7 +412,10 @@
      menos movimento no sistema fica com a tigela parada no primeiro quadro. */
   if (video) {
     if (reduced) { video.autoplay = false; video.loop = false; video.pause(); }
-    else { tocar(video).catch(comecaADeriva); provaMovimento(video, comecaADeriva); }
+    else {
+      tocar(video).catch(comecaADeriva);
+      acordaQuadro(video, comecaADeriva);
+    }
   }
 
   /* O iOS recusa o autoplay em algumas situações e aí desenha um botão de
@@ -436,15 +463,12 @@
           v.src = v.dataset.src;
           v.removeAttribute('data-src');
           if (reduced) return;
-          const tenta = () => {
-            tocar(v).catch(() => {});
-            provaMovimento(v, () => {
-              const d = derivaDoReel.get(v);
-              if (d) d.comecar(); else cuidaDosReels();
-            });
+          const planoB = () => {
+            const d = derivaDoReel.get(v);
+            if (d) d.comecar(); else cuidaDosReels();
           };
-          tenta();
-          v.addEventListener('loadeddata', tenta, { once: true });
+          tocar(v).catch(() => {});
+          acordaQuadro(v, planoB);
         });
         el.querySelectorAll('iframe[data-src]').forEach((f) => {
           f.src = f.dataset.src;
