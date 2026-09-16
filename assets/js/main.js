@@ -103,6 +103,73 @@
     return (p && p.catch) ? p : Promise.resolve();
   };
 
+  /* ---------- o vídeo pinta numa tela, não na tela dele ----------
+     Ver o comentário no CSS: isto existe pra tirar o botão de play do iOS da
+     jogada de vez e pra não depender de autoplay, que no Modo de Baixo
+     Consumo nunca é concedido. O <video> vira decodificador; o <canvas> é
+     quem o visitante vê. */
+  const pinturaEm = (v) => {
+    if (!v || v.dataset.pintando) return () => {};
+    const pai = v.parentNode;
+    if (!pai) return () => {};
+    v.dataset.pintando = '1';
+
+    const tela = document.createElement('canvas');
+    tela.className = 'tela-video';
+    tela.setAttribute('aria-hidden', 'true');
+    /* enquanto o primeiro quadro não chega, o poster segura a imagem */
+    const poster = v.getAttribute('poster');
+    if (poster) tela.style.backgroundImage = 'url("' + poster + '")';
+    const ctx = tela.getContext('2d', { alpha: false });
+    pai.insertBefore(tela, v);
+    v.classList.add('e-fonte');
+
+    let lg = 0, at = 0, temQuadro = false;
+
+    const desenha = () => {
+      if (!ctx || !v.videoWidth) return;
+      const r = v.getBoundingClientRect();
+      if (!r.width || !r.height) return;
+      /* mais que 2x de densidade não se enxerga e custa memória à toa */
+      const dpr = Math.min(2, window.devicePixelRatio || 1);
+      const nl = Math.round(r.width * dpr), na = Math.round(r.height * dpr);
+      if (nl !== lg || na !== at) { lg = tela.width = nl; at = tela.height = na; }
+
+      /* mesmo enquadramento do object-fit:cover que o vídeo tinha */
+      const pv = v.videoWidth / v.videoHeight, pt = lg / at;
+      let ox, oy, ol, oa;
+      if (pv > pt) { oa = v.videoHeight; ol = oa * pt; ox = (v.videoWidth - ol) / 2; oy = 0; }
+      else         { ol = v.videoWidth;  oa = ol / pt; ox = 0; oy = (v.videoHeight - oa) / 2; }
+      ctx.drawImage(v, ox, oy, ol, oa, 0, 0, lg, at);
+
+      if (!temQuadro) { temQuadro = true; tela.style.backgroundImage = 'none'; }
+    };
+
+    /* busca e deriva já disparam 'seeked' — é ali que a maior parte dos
+       quadros é pintada, sem laço nenhum rodando à toa */
+    v.addEventListener('seeked', desenha);
+    v.addEventListener('loadeddata', desenha);
+    v.addEventListener('canplay', desenha);
+
+    /* e quando o vídeo consegue tocar de verdade, um quadro por quadro
+       decodificado — requestVideoFrameCallback é exatamente isso, e cai pro
+       rAF onde não existir */
+    let laco = 0;
+    const porQuadro = () => { desenha(); agenda(); };
+    const agenda = () => {
+      if (v.paused || v.ended) { laco = 0; return; }
+      laco = v.requestVideoFrameCallback
+        ? v.requestVideoFrameCallback(porQuadro)
+        : requestAnimationFrame(porQuadro);
+    };
+    v.addEventListener('play', () => { if (!laco) agenda(); });
+    v.addEventListener('pause', () => { laco = 0; });
+    addEventListener('resize', desenha);
+    if (v.readyState >= 2) desenha();
+
+    return desenha;
+  };
+
   /* ---------- animar por busca ----------
      Mover currentTime não precisa de permissão nenhuma, então dá pra animar
      um vídeo que o aparelho não deixa tocar. Custa mais CPU que deixar tocar,
@@ -237,6 +304,7 @@
     raf = requestAnimationFrame(passo);
   };
 
+  const pintaHero = pinturaEm(video);
   const derivaHero = video
     ? criaDeriva(video, () => noHero() && !presoAoScroll, () => PASSO)
     : { comecar() {}, parar() {} };
@@ -391,6 +459,7 @@
      saiu da tela pausa: vídeo em laço fora de vista é bateria queimada à
      toa, e no celular isso pesa mais que em qualquer outro lugar. */
   const reels = [...document.querySelectorAll('.reel video')];
+  reels.forEach(pinturaEm);
   const naTelaO = (v) => { const r = v.getBoundingClientRect(); return r.bottom > 0 && r.top < innerHeight; };
   const derivaDoReel = new WeakMap();
   const derivaPara = (v) => {

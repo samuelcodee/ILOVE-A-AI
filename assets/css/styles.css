@@ -289,6 +289,25 @@ a{ color:inherit; text-decoration:none; }
   object-fit:cover;
 }
 
+/* ---------- o vídeo não aparece; quem aparece é a tela ----------
+   O <video> continua no lugar, do tamanho certo, decodificando — mas com
+   opacidade zero. O que o visitante vê é um <canvas> desenhado a partir dele.
+
+   Motivo: o botão de play do iOS mora dentro do shadow DOM do <video>, e
+   esconder pseudo-elemento de fabricante é aposta — já falhou duas vezes
+   aqui. Opacidade zero no elemento inteiro leva o botão junto, sem aposta
+   nenhuma. E canvas não tem controle nativo pra desenhar.
+
+   O ganho maior é outro: desenhar um quadro não pede permissão de autoplay.
+   No Modo de Baixo Consumo do iPhone o autoplay simplesmente nunca vem, e
+   esse caminho não depende dele. */
+video.e-fonte{ opacity:0 !important; }
+.tela-video{
+  position:absolute; inset:0; z-index:1;
+  display:block; width:100%; height:100%;
+  background-size:cover; background-position:center;
+}
+
 /* ---------- selo circular ---------- */
 .seal{
   position:absolute; z-index:5;
