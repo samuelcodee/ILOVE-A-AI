@@ -103,6 +103,53 @@
     return (p && p.catch) ? p : Promise.resolve();
   };
 
+  /* ---------- animar por busca ----------
+     Mover currentTime não precisa de permissão nenhuma, então dá pra animar
+     um vídeo que o aparelho não deixa tocar. Custa mais CPU que deixar tocar,
+     por isso só entra quando tocar não funciona de verdade. */
+  const criaDeriva = (v, emCena, passoDe) => {
+    let raf = 0, ultimo = 0, acum = 0;
+    const parar = () => { if (raf) cancelAnimationFrame(raf); raf = 0; ultimo = 0; acum = 0; };
+    const quadro = () => {
+      raf = 0;
+      if (!v.paused || document.hidden || !v.duration || !emCena()) { ultimo = 0; acum = 0; return; }
+      const agora = performance.now();
+      const dt = ultimo ? Math.min(100, agora - ultimo) : 0;
+      ultimo = agora;
+      acum += dt / 1000;
+      if (acum >= passoDe() && !v.seeking) {
+        let t = v.currentTime + acum;
+        acum = 0;
+        if (t >= v.duration) t = 0;
+        v.currentTime = t;
+      }
+      raf = requestAnimationFrame(quadro);
+    };
+    return {
+      comecar: () => { if (!raf && !reduced) raf = requestAnimationFrame(quadro); },
+      parar,
+    };
+  };
+
+  /* O iOS mente de DUAS formas: pode recusar o play() e pode RESOLVER o
+     play() sem mover um único quadro (Modo de Baixo Consumo faz isso). Então
+     a promessa não prova nada — quem prova é o relógio do próprio vídeo.
+     Se ele não andou, pausa de verdade (pra normalizar o estado) e chama o
+     plano B. */
+  const naoAndou = new WeakSet();
+  const provaMovimento = (v, planoB, tentativa) => {
+    const t0 = v.currentTime;
+    setTimeout(() => {
+      if (v.seeking || v.currentTime !== t0) return;      /* andou: tudo certo */
+      if (v.readyState < 2 && (tentativa || 0) < 4) {     /* ainda carregando */
+        return provaMovimento(v, planoB, (tentativa || 0) + 1);
+      }
+      try { v.pause(); } catch (e) {}
+      naoAndou.add(v);
+      planoB();
+    }, 520);
+  };
+
   const hero  = document.getElementById('hero');
   const video = document.querySelector('.media__slot--live video');
   const podeArrastar = !!video && !reduced;
@@ -190,35 +237,11 @@
     raf = requestAnimationFrame(passo);
   };
 
-  let rafDeriva = 0, ultimaDeriva = 0, acumDeriva = 0;
-  const paraADeriva = () => {
-    if (rafDeriva) cancelAnimationFrame(rafDeriva);
-    rafDeriva = 0; ultimaDeriva = 0; acumDeriva = 0;
-  };
-  const passoDaDeriva = () => {
-    rafDeriva = 0;
-    /* some assim que deixa de fazer sentido: o vídeo voltou a tocar de
-       verdade, o dedo assumiu, o hero saiu de cena ou a aba foi pro fundo */
-    if (!video || !video.paused || presoAoScroll || !noHero() || document.hidden || !dur) {
-      ultimaDeriva = 0; acumDeriva = 0; return;
-    }
-    const agora = performance.now();
-    const dt = ultimaDeriva ? Math.min(100, agora - ultimaDeriva) : 0;
-    ultimaDeriva = agora;
-    acumDeriva += dt / 1000;
-    /* respeita o mesmo passo que o resto do arrasto usa: em aparelho lento
-       ele já é maior, e a deriva anda em degraus maiores junto */
-    if (acumDeriva >= PASSO && !video.seeking) {
-      let t = video.currentTime + acumDeriva;
-      acumDeriva = 0;
-      if (t >= dur) t = 0;          /* o arquivo é vai-e-volta: dá a volta limpo */
-      video.currentTime = t;
-    }
-    rafDeriva = requestAnimationFrame(passoDaDeriva);
-  };
-  const comecaADeriva = () => {
-    if (!rafDeriva && !reduced && video && dur) rafDeriva = requestAnimationFrame(passoDaDeriva);
-  };
+  const derivaHero = video
+    ? criaDeriva(video, () => noHero() && !presoAoScroll, () => PASSO)
+    : { comecar() {}, parar() {} };
+  const comecaADeriva = () => derivaHero.comecar();
+  const paraADeriva = () => derivaHero.parar();
 
   function largaOScroll() {
     presoAoScroll = false;
@@ -228,7 +251,10 @@
 
   function solta() {
     largaOScroll();
-    if (video && noHero()) tocar(video).catch(comecaADeriva);
+    if (video && noHero()) {
+      tocar(video).catch(comecaADeriva);
+      provaMovimento(video, comecaADeriva);
+    }
   }
 
   /* aba escondida não desenha, mas vídeo em laço continua decodificando e
@@ -294,7 +320,7 @@
      menos movimento no sistema fica com a tigela parada no primeiro quadro. */
   if (video) {
     if (reduced) { video.autoplay = false; video.loop = false; video.pause(); }
-    else tocar(video).catch(comecaADeriva);
+    else { tocar(video).catch(comecaADeriva); provaMovimento(video, comecaADeriva); }
   }
 
   /* O iOS recusa o autoplay em algumas situações e aí desenha um botão de
@@ -309,9 +335,15 @@
     addEventListener('touchstart', destrava, { once: true, passive: true });
     addEventListener('pointerdown', destrava, { once: true, passive: true });
     /* e o mesmo toque devolve qualquer reel que tenha ficado pra trás */
-    const destravaReels = () => document.querySelectorAll('.reel video').forEach((v) => {
-      if (!v.dataset.src && v.getAttribute('src') && v.paused) tocar(v).catch(() => {});
-    });
+    /* Gesto do usuário derruba a política de autoplay do iOS, então vale
+       apagar o "não anda" e tentar de novo — inclusive pro hero. */
+    const destravaReels = () => {
+      naoAndou.delete(video);
+      document.querySelectorAll('.reel video').forEach((v) => {
+        naoAndou.delete(v);
+        if (!v.dataset.src && v.getAttribute('src') && v.paused) tocar(v).catch(() => {});
+      });
+    };
     addEventListener('touchstart', destravaReels, { once: true, passive: true });
   }
 
@@ -336,7 +368,13 @@
           v.src = v.dataset.src;
           v.removeAttribute('data-src');
           if (reduced) return;
-          const tenta = () => tocar(v).catch(() => {});
+          const tenta = () => {
+            tocar(v).catch(() => {});
+            provaMovimento(v, () => {
+              const d = derivaDoReel.get(v);
+              if (d) d.comecar(); else cuidaDosReels();
+            });
+          };
           tenta();
           v.addEventListener('loadeddata', tenta, { once: true });
         });
@@ -353,14 +391,26 @@
      saiu da tela pausa: vídeo em laço fora de vista é bateria queimada à
      toa, e no celular isso pesa mais que em qualquer outro lugar. */
   const reels = [...document.querySelectorAll('.reel video')];
+  const naTelaO = (v) => { const r = v.getBoundingClientRect(); return r.bottom > 0 && r.top < innerHeight; };
+  const derivaDoReel = new WeakMap();
+  const derivaPara = (v) => {
+    let d = derivaDoReel.get(v);
+    if (!d) { d = criaDeriva(v, () => naTelaO(v), () => 1 / 20); derivaDoReel.set(v, d); }
+    return d;
+  };
   const cuidaDosReels = () => {
     if (reduced) return;
     for (const v of reels) {
       if (v.dataset.src || !v.getAttribute('src')) continue;
-      const r = v.getBoundingClientRect();
-      const naTela = r.bottom > 0 && r.top < innerHeight;
-      if (naTela) { if (v.paused) tocar(v).catch(() => {}); }
-      else if (!v.paused) v.pause();
+      const naTela = naTelaO(v);
+      if (!naTela) { derivaPara(v).parar(); if (!v.paused) v.pause(); continue; }
+      /* Já sabemos que este não anda sozinho: não adianta pedir play de novo
+         a cada quadro de scroll — anima na mão e pronto. */
+      if (naoAndou.has(v)) { derivaPara(v).comecar(); continue; }
+      if (v.paused) {
+        tocar(v).catch(() => {});
+        provaMovimento(v, () => derivaPara(v).comecar());
+      }
     }
   };
 

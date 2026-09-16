@@ -48,16 +48,20 @@
    controls. Aqui vídeo nenhum é coisa pra assistir: um é a animação presa ao
    scroll, o outro é um reel de fundo. O botão faz a página parecer quebrada,
    e foi exatamente isso que apareceu no iPhone. */
-video::-webkit-media-controls,
-video::-webkit-media-controls-enclosure,
-video::-webkit-media-controls-panel,
+/* UMA REGRA POR SELETOR, de propósito. Numa lista separada por vírgula, se
+   o navegador não souber analisar UM dos seletores ele descarta a regra
+   INTEIRA — inclusive as partes que ele entenderia. Era isso: os quatro
+   estavam juntos, e no iPhone o botão continuou aparecendo. Separados, um
+   seletor desconhecido só derruba a si mesmo. */
 video::-webkit-media-controls-start-playback-button{
   display:none !important;
   -webkit-appearance:none;
   appearance:none;
-  opacity:0 !important;
-  pointer-events:none !important;
 }
+video::-webkit-media-controls-panel{ display:none !important; }
+video::-webkit-media-controls-enclosure{ display:none !important; }
+video::-webkit-media-controls{ display:none !important; }
+video::-moz-media-controls{ display:none !important; }
 
 /* o site só carrega 400/500/600: sem esta linha o <b> pediria 700 e o
    navegador engordaria a letra por conta própria */
