@@ -89,6 +89,20 @@
   /* e o passo que realmente vale, que cresce se o aparelho não der conta */
   let PASSO = 1 / 30;
 
+  /* O iOS só libera autoplay pra vídeo comprovadamente mudo e em linha, e
+     consulta as propriedades, não os atributos do HTML. Com o src definido
+     por script — que é o nosso caso nos dois vídeos — o atributo sozinho não
+     conta, e a recusa vem sem erro nenhum no console. Toda chamada de play
+     passa por aqui pra nunca mais depender disso. */
+  const tocar = (v) => {
+    if (!v) return Promise.reject();
+    v.muted = true;
+    v.defaultMuted = true;
+    v.playsInline = true;
+    const p = v.play();
+    return (p && p.catch) ? p : Promise.resolve();
+  };
+
   const hero  = document.getElementById('hero');
   const video = document.querySelector('.media__slot--live video');
   const podeArrastar = !!video && !reduced;
@@ -176,6 +190,36 @@
     raf = requestAnimationFrame(passo);
   };
 
+  let rafDeriva = 0, ultimaDeriva = 0, acumDeriva = 0;
+  const paraADeriva = () => {
+    if (rafDeriva) cancelAnimationFrame(rafDeriva);
+    rafDeriva = 0; ultimaDeriva = 0; acumDeriva = 0;
+  };
+  const passoDaDeriva = () => {
+    rafDeriva = 0;
+    /* some assim que deixa de fazer sentido: o vídeo voltou a tocar de
+       verdade, o dedo assumiu, o hero saiu de cena ou a aba foi pro fundo */
+    if (!video || !video.paused || presoAoScroll || !noHero() || document.hidden || !dur) {
+      ultimaDeriva = 0; acumDeriva = 0; return;
+    }
+    const agora = performance.now();
+    const dt = ultimaDeriva ? Math.min(100, agora - ultimaDeriva) : 0;
+    ultimaDeriva = agora;
+    acumDeriva += dt / 1000;
+    /* respeita o mesmo passo que o resto do arrasto usa: em aparelho lento
+       ele já é maior, e a deriva anda em degraus maiores junto */
+    if (acumDeriva >= PASSO && !video.seeking) {
+      let t = video.currentTime + acumDeriva;
+      acumDeriva = 0;
+      if (t >= dur) t = 0;          /* o arquivo é vai-e-volta: dá a volta limpo */
+      video.currentTime = t;
+    }
+    rafDeriva = requestAnimationFrame(passoDaDeriva);
+  };
+  const comecaADeriva = () => {
+    if (!rafDeriva && !reduced && video && dur) rafDeriva = requestAnimationFrame(passoDaDeriva);
+  };
+
   function largaOScroll() {
     presoAoScroll = false;
     ultimoQuadro = 0;
@@ -184,7 +228,7 @@
 
   function solta() {
     largaOScroll();
-    if (video && noHero()) video.play().catch(() => {});
+    if (video && noHero()) tocar(video).catch(comecaADeriva);
   }
 
   /* aba escondida não desenha, mas vídeo em laço continua decodificando e
@@ -193,7 +237,7 @@
   document.addEventListener('visibilitychange', () => {
     if (!video) return;
     if (document.hidden) video.pause();
-    else if (noHero() && !presoAoScroll) video.play().catch(() => {});
+    else if (noHero() && !presoAoScroll) tocar(video).catch(comecaADeriva);
   });
 
   function arrasta() {
@@ -206,11 +250,12 @@
       return;
     }
     if (!podeArrastar || !dur) {
-      if (video.paused) video.play().catch(() => {});
+      if (video.paused) tocar(video).catch(() => {});
       return;
     }
 
     if (!presoAoScroll) {
+      paraADeriva();
       presoAoScroll = true;
       video.pause();
       atual = dobra(video.currentTime);
@@ -249,7 +294,7 @@
      menos movimento no sistema fica com a tigela parada no primeiro quadro. */
   if (video) {
     if (reduced) { video.autoplay = false; video.loop = false; video.pause(); }
-    else video.play().catch(() => {});
+    else tocar(video).catch(comecaADeriva);
   }
 
   /* O iOS recusa o autoplay em algumas situações e aí desenha um botão de
@@ -259,14 +304,13 @@
      o laço quando o dedo permite. Uma vez só, e passivo. */
   if (video && !reduced) {
     const destrava = () => {
-      const p = video.play();
-      if (p && p.then) p.then(() => { if (presoAoScroll) video.pause(); }).catch(() => {});
+      tocar(video).then(() => { if (presoAoScroll) video.pause(); }).catch(() => {});
     };
     addEventListener('touchstart', destrava, { once: true, passive: true });
     addEventListener('pointerdown', destrava, { once: true, passive: true });
     /* e o mesmo toque devolve qualquer reel que tenha ficado pra trás */
     const destravaReels = () => document.querySelectorAll('.reel video').forEach((v) => {
-      if (!v.dataset.src && v.getAttribute('src') && v.paused) v.play().catch(() => {});
+      if (!v.dataset.src && v.getAttribute('src') && v.paused) tocar(v).catch(() => {});
     });
     addEventListener('touchstart', destravaReels, { once: true, passive: true });
   }
@@ -292,7 +336,7 @@
           v.src = v.dataset.src;
           v.removeAttribute('data-src');
           if (reduced) return;
-          const tenta = () => v.play().catch(() => {});
+          const tenta = () => tocar(v).catch(() => {});
           tenta();
           v.addEventListener('loadeddata', tenta, { once: true });
         });
@@ -315,7 +359,7 @@
       if (v.dataset.src || !v.getAttribute('src')) continue;
       const r = v.getBoundingClientRect();
       const naTela = r.bottom > 0 && r.top < innerHeight;
-      if (naTela) { if (v.paused) v.play().catch(() => {}); }
+      if (naTela) { if (v.paused) tocar(v).catch(() => {}); }
       else if (!v.paused) v.pause();
     }
   };

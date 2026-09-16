@@ -43,6 +43,22 @@
 
 *,*::before,*::after{ box-sizing:border-box; }
 
+/* O iOS desenha um botão de play gigante por cima de qualquer vídeo que ele
+   julgue "parado e pronto pra tocar" — e desenha mesmo sem o atributo
+   controls. Aqui vídeo nenhum é coisa pra assistir: um é a animação presa ao
+   scroll, o outro é um reel de fundo. O botão faz a página parecer quebrada,
+   e foi exatamente isso que apareceu no iPhone. */
+video::-webkit-media-controls,
+video::-webkit-media-controls-enclosure,
+video::-webkit-media-controls-panel,
+video::-webkit-media-controls-start-playback-button{
+  display:none !important;
+  -webkit-appearance:none;
+  appearance:none;
+  opacity:0 !important;
+  pointer-events:none !important;
+}
+
 /* o site só carrega 400/500/600: sem esta linha o <b> pediria 700 e o
    navegador engordaria a letra por conta própria */
 b, strong{ font-weight:600; }
