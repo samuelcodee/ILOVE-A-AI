@@ -51,11 +51,21 @@
      de ida, a troca entre "rodando sozinho" e "preso ao scroll" nunca dá
      salto de imagem, mesmo quando o loop já passou da metade.
 
-     Fica só onde existe roda ou trackpad: em tela de toque a busca no vídeo
-     briga com a rolagem por inércia e engasga. */
+     Vale no dedo também. Isso já esteve desligado no toque porque a busca
+     engasgava — mas o culpado era o ARQUIVO, não o dedo: o vídeo do celular
+     tinha um keyframe a cada 250 quadros, e cada busca obrigava o
+     decodificador a remontar até 250 quadros pra chegar no instante pedido.
+     Medido: 88ms por busca, contra 16,7ms de orçamento por quadro. Com GOP
+     16 a mesma busca custa 10ms e cabe folgado dentro do quadro. */
+  /* distância mínima entre o tempo pedido e o tempo atual pra valer uma
+     busca nova; ajustado à taxa de quadros do arquivo que for escolhido */
+  let QUADRO = 1 / 30;
+  /* e o passo que realmente vale, que cresce se o aparelho não der conta */
+  let PASSO = 1 / 30;
+
   const hero  = document.getElementById('hero');
   const video = document.querySelector('.media__slot--live video');
-  const podeArrastar = !!video && !reduced && matchMedia('(pointer:fine)').matches;
+  const podeArrastar = !!video && !reduced;
 
   /* Duas versões do mesmo vídeo: a pesada (crf 22, 6 MB) só vai pra quem tem
      mouse e tela grande — que é exatamente quem arrasta a animação pelo scroll
@@ -64,38 +74,27 @@
   if (video && !video.getAttribute('src')) {
     const rede = navigator.connection || {};
     const aguenta = !rede.saveData && !/2g/.test(rede.effectiveType || '');
-    /* Três degraus, e o que decide é o mesmo 'pointer:fine' que liga o
-       arrasto pelo scroll. Sem dedo fino não há busca no vídeo, e sem busca
-       o GOP pode ser longo: por isso a versão de celular é 720px de largura
-       com GOP 250, e cabe em 731 kB em vez de 3,2 MB. */
+    /* Três degraus. O de celular é 720x372 a 20 q/s com GOP 16: 1,1 MB
+       contra os 731 kB do anterior, e em troca cada busca cai de 88ms para
+       10ms. Pelo SSIM ele ainda é melhor de imagem que o antigo (0,971
+       contra 0,942), porque o que inchava o arquivo velho não era qualidade,
+       era o intervalo enorme entre keyframes.
+
+       O arquivo pesado (crf 22) continua só pra tela grande com rede boa. */
     const fino = matchMedia('(pointer:fine)').matches;
     const fonte = !fino ? video.dataset.sm
                 : (aguenta && innerWidth >= 900 && video.dataset.hd) ? video.dataset.hd
                 : video.dataset.sd;
 
-    const ligaVideo = () => { video.src = fonte || video.dataset.sd; };
+    /* o de celular é 20 q/s, os outros 30: é esta a distância mínima que
+       vale uma busca nova */
+    QUADRO = PASSO = !fino ? 1 / 20 : 1 / 30;
 
-    if (fino) {
-      /* no desktop o vídeo É a interação: o scroll arrasta o tempo dele, então
-         ele não pode chegar atrasado */
-      ligaVideo();
-    } else {
-      /* No celular ele só roda em laço — ninguém arrasta nada. Deixar 731 kB
-         disputarem banda com o resto atrasa a página inteira por uma animação
-         que pode começar meio segundo depois sem ninguém notar: o poster já
-         está lá, e é o primeiro quadro do próprio vídeo.
-
-         Depois do 'load' e ainda numa folga: a fila termina antes de o vídeo
-         entrar nela. */
-      const depois = () => ('requestIdleCallback' in window)
-        ? requestIdleCallback(ligaVideo, { timeout: 2500 })
-        : setTimeout(ligaVideo, 600);
-      if (document.readyState === 'complete') depois();
-      else addEventListener('load', depois, { once: true });
-    }
+    /* Em qualquer tela o vídeo agora é a interação — o scroll arrasta o
+       tempo dele — então ele não pode chegar atrasado em nenhuma. */
+    video.src = fonte || video.dataset.sd;
   }
 
-  const QUADRO = 1 / 30;
   let dur = 0, meia = 0, alvo = 0, atual = 0, presoAoScroll = false, raf = 0;
 
   /* silêncio de roda que devolve o vídeo pro loop. 70ms passa folgado
@@ -141,7 +140,7 @@
 
     atual += (alvo - atual) * (1 - Math.pow(1 - PERSEGUE, dt));
     if (Math.abs(alvo - atual) < QUADRO * 1.5) atual = alvo;
-    if (Math.abs(video.currentTime - atual) >= QUADRO) video.currentTime = atual;
+    if (!video.seeking && Math.abs(video.currentTime - atual) >= PASSO) video.currentTime = atual;
 
     /* Alcançou o scroll E a roda está quieta: devolve pro loop agora.
        Alcançou mas a roda ainda anda: continua de olho, sem soltar.
@@ -195,6 +194,23 @@
     if (!raf) raf = requestAnimationFrame(passo);
   }
 
+  /* Quanto custa, NESTE aparelho, pedir um instante novo. Média móvel: um
+     pico isolado não pode mudar o comportamento, mas um aparelho
+     consistentemente lento sim. Acima de 24ms a busca já não cabe num quadro
+     de 60 Hz, então vale pedir menos e mais espaçado — a imagem anda em
+     degraus um pouco maiores, que é muito menos visível que engasgo. */
+  if (podeArrastar) {
+    let custo = 0, pedidaEm = 0;
+    video.addEventListener('seeking', () => { pedidaEm = performance.now(); });
+    video.addEventListener('seeked', () => {
+      if (!pedidaEm) return;
+      const d = performance.now() - pedidaEm;
+      pedidaEm = 0;
+      custo = custo ? custo * 0.8 + d * 0.2 : d;
+      PASSO = custo > 24 ? QUADRO * 3 : custo > 14 ? QUADRO * 2 : QUADRO;
+    });
+  }
+
   if (podeArrastar) {
     const medido = () => { dur = video.duration; meia = dur / 2; };
     video.readyState >= 1
@@ -208,6 +224,20 @@
   if (video) {
     if (reduced) { video.autoplay = false; video.loop = false; video.pause(); }
     else video.play().catch(() => {});
+  }
+
+  /* O iOS recusa o autoplay em algumas situações e aí desenha um botão de
+     play por cima do poster — cara de vídeo pra assistir, que é justamente o
+     contrário do que isto é. Buscar (currentTime) não precisa de permissão
+     nenhuma, então mesmo recusado o arrasto funciona; este toque só devolve
+     o laço quando o dedo permite. Uma vez só, e passivo. */
+  if (video && !reduced) {
+    const destrava = () => {
+      const p = video.play();
+      if (p && p.then) p.then(() => { if (presoAoScroll) video.pause(); }).catch(() => {});
+    };
+    addEventListener('touchstart', destrava, { once: true, passive: true });
+    addEventListener('pointerdown', destrava, { once: true, passive: true });
   }
 
   /* ---------- a seção da loja ----------
@@ -227,6 +257,10 @@
           v.src = v.dataset.src;
           v.removeAttribute('data-src');
           if (!reduced) v.play().catch(() => {});
+        });
+        el.querySelectorAll('iframe[data-src]').forEach((f) => {
+          f.src = f.dataset.src;
+          f.removeAttribute('data-src');
         });
       }
     }
