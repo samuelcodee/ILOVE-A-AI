@@ -14,22 +14,8 @@
   --texto:   "Poppins", -apple-system, "Segoe UI", sans-serif;
 
   --gutter:    clamp(18px, 2.2vw, 34px);
-  --stage-pad: clamp(28px, 4vw, 54px);
   --nav-h:     clamp(66px, 6vw, 84px);
   --dock-h:    clamp(80px, 6vw, 88px);
-
-  --giant-f: min(clamp(54px, 10.2vw, 152px), 12vh);
-  /* mesma forma do blob, para recortar o que se apoia nele */
-  --blob-mask: url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1200 820' preserveAspectRatio='none'%3E%3Cpath d='M128 34C330 14 560 26 760 20c120-4 240 2 314 16 62 12 96 56 100 120 6 144-8 314-2 470 4 78-32 138-110 154-182 20-462 4-682 12-112 4-228 0-284-22-56-22-74-70-70-134-6-166 8-336 2-480 4-64 46-110 108-122z' fill='%23fff'/%3E%3C/svg%3E");
-  /* a quina do blob cresce com a tela; com recuo fixo o "a" de açaí
-     encostava fora da curva em 1920 */
-  --giant-x: clamp(24px, 5.6vw, 108px);
-  --giant-y: clamp(16px, 2.7vw, 38px);
-  --panel-ar: 1.938;                       /* 1256 / 648 do vídeo */
-  --panel-ar-m: 1.25;
-  --panel-r:   clamp(20px, 2.6vw, 44px);
-  --panel-gap:   clamp(10px, 1.6vw, 26px);
-  --claim-band:  calc(clamp(20px, 5.4vw, 28px) * 3.5 + 7%);
 
   --ease-settle: cubic-bezier(.18,.9,.24,1);
   --ease-leave:  cubic-bezier(.55,0,.8,.2);
@@ -195,51 +181,88 @@ a{ color:inherit; text-decoration:none; }
 /* =========================================================
    HERO — uma cena presa na tela, com o vídeo arrastado pelo scroll
    ========================================================= */
+/* =========================================================
+   HERO — uma fotografia só, sem vídeo
+   =========================================================
+   A imagem já chega pronta pra virar hero: espaço vazio à esquerda,
+   tigela e respingo tomando a direita. É nesse vazio que o título
+   mora — no desktop a foto cobre a seção inteira (object-fit:cover)
+   e um véu escurece só essa faixa, na cor mais escura da própria
+   imagem, então a emenda entre véu e foto é invisível e a tigela do
+   outro lado continua intocada.
+
+   No celular não sobra faixa nenhuma pra escurecer: um recorte de
+   tela cheia mostra a tigela de ponta a ponta, sem espaço para três
+   linhas de título (testei — a régua de texto não cabia). Por isso lá
+   a foto vira um cartão abaixo do texto, no mesmo ritmo empilhado que
+   a loja já usa (texto em cima, mídia embaixo). */
 .hero{
   position:relative;
-  height:200vh;
-  height:200svh;
-}
-.hero__pin{
-  position:sticky; top:0;
   height:100vh;
   height:100svh;
-  display:flex;
-  padding:var(--nav-h) var(--gutter) var(--dock-h);
-}
-.hero__stage{
-  position:relative;
-  flex:1;
-  padding:var(--stage-pad);
+  min-height:600px;
   isolation:isolate;
 }
 
-.blob{
+.hero__foto{
+  position:absolute; inset:0; z-index:0;
+  overflow:hidden;
+  background:#170211;
+  animation:fotoEntra 1.15s var(--ease-settle) both;
+}
+@keyframes fotoEntra{
+  from{ opacity:0; transform:scale(1.045); }
+  to  { opacity:1; transform:scale(1); }
+}
+.hero__img{
+  display:block;
   position:absolute; inset:0;
   width:100%; height:100%;
-  z-index:-1;
-  fill:var(--creme);
-  filter:drop-shadow(0 26px 60px rgba(40,4,36,.32));
+  object-fit:cover;
+  object-position:38% center;
+  /* deriva contínua e bem sutil — a tigela nunca fica de todo parada,
+     sem virar chamativa a ponto de competir com o título */
+  animation:heroDeriva 32s ease-in-out infinite;
+}
+@keyframes heroDeriva{
+  0%,100%{ transform:scale(1.045) translate3d(0,0,0); }
+  50%    { transform:scale(1.075) translate3d(-1.1%,-0.7%,0); }
+}
+/* o véu usa a cor mais escura da própria foto (medida por amostragem),
+   então a emenda com a imagem não aparece — só escurece a faixa do
+   texto, e some antes de chegar na tigela */
+.hero__veu{
+  position:absolute; inset:0; z-index:1;
+  background:
+    linear-gradient(100deg,
+      rgba(19,1,14,.92) 0%,
+      rgba(19,1,14,.82) 30%,
+      rgba(19,1,14,.42) 48%,
+      rgba(19,1,14,.08) 62%,
+      rgba(19,1,14,0)   74%),
+    linear-gradient(to top, rgba(12,1,9,.46) 0%, rgba(12,1,9,0) 30%);
 }
 
-.scene{ position:absolute; inset:0; }
+.hero__conteudo{
+  position:relative; z-index:2;
+  height:100%;
+  display:flex;
+  align-items:center;
+  padding:var(--nav-h) var(--gutter) var(--dock-h);
+}
+.scene{ max-width:clamp(320px, 33vw, 560px); }
 
-/* ---------- tipografia gigante ---------- */
+.sobrancelha--hero{ color:var(--amarelo); }
+
 .giant{
-  position:absolute;
-  top:var(--giant-y);
-  left:var(--giant-x);
-  right:var(--giant-x);
-  margin:0; z-index:1;
+  margin:0 0 clamp(14px,1.6vw,22px);
   font-family:var(--display);
   font-weight:600;
-  font-size:var(--giant-f);
-  line-height:.80;
-  letter-spacing:-.038em;
-  color:var(--roxo);
+  font-size:clamp(40px, 5.4vw, 92px);
+  line-height:.86;
+  letter-spacing:-.03em;
+  color:var(--creme);
   text-transform:lowercase;
-  white-space:nowrap;
-  pointer-events:none;
 }
 .giant .ln{ display:block; }
 .giant i{
@@ -249,8 +272,6 @@ a{ color:inherit; text-decoration:none; }
   opacity:0;
   transform:translate(var(--dx),var(--dy)) rotate(var(--rot));
 }
-
-/* cada letra assenta no lugar; o atraso cresce da última para a primeira */
 .scene.is-on .giant i{
   animation:letterIn .66s var(--ease-settle) forwards;
   animation-delay:var(--d);
@@ -258,72 +279,57 @@ a{ color:inherit; text-decoration:none; }
 @keyframes letterIn{
   to{ opacity:1; transform:translate(0,0) rotate(0deg); }
 }
-/* ---------- entrada dos blocos ---------- */
+.scene.is-on .sobrancelha{ animation:blockIn .56s var(--ease-settle) both; }
 .scene.is-on .giant{ animation:giantIn .82s var(--ease-settle) both; }
-.scene.is-on .pitch{ animation:blockIn .62s var(--ease-settle) .16s both; }
+.scene.is-on .pitch{ animation:blockIn .62s var(--ease-settle) .18s both; }
+.scene.is-on .btn-hero{ animation:blockIn .62s var(--ease-settle) .3s both; }
 
 @keyframes giantIn{ from{ transform:translateY(-3.5vh); } to{ transform:translateY(0); } }
 @keyframes blockIn{ from{ transform:translateY(-8vh); opacity:0; } to{ transform:translateY(0); opacity:1; } }
 
-/* ---------- painel de mídia ----------
-   O vídeo traz o próprio cenário (a bancada, a cozinha desfocada ao fundo),
-   então ele não é recortado como era a tigela em fundo branco: vira uma
-   janela grande apoiada sobre o blob. A largura cede ao que sobra de altura
-   depois do título, para o painel nunca empurrar a composição para fora. */
-.media{
-  position:absolute; z-index:3;
-  left:50%; bottom:4.6%;
-  transform:translateX(-50%);
-  width:min(
-    clamp(300px, 66vw, 1120px),
-    calc(((100svh - var(--nav-h) - var(--dock-h)) * .954
-          - var(--giant-f) * 2 - 42px) * var(--panel-ar))
-  );
-  aspect-ratio:1256 / 648;
-  container-type:size;
-}
-.media__slot{
-  position:absolute; inset:0;
-  border-radius:var(--panel-r);
+.pitch{
+  margin:0 0 clamp(22px,2.6vw,32px);
+  max-width:30ch;
+  font-size:clamp(14.5px,1.15vw,17px);
+  line-height:1.5;
+  color:rgba(255,248,229,.86);
 }
 
-.media__slot--live{
-  overflow:hidden;
-  background:#EFE4D6;
-  box-shadow:0 34px 74px rgba(40,4,36,.34), 0 8px 20px rgba(40,4,36,.16);
+.btn-hero{
+  display:inline-flex; align-items:center; gap:9px;
+  min-height:50px;
+  padding:0 clamp(20px,2vw,28px);
+  border-radius:999px;
+  font-family:var(--display);
+  font-weight:600;
+  font-size:clamp(14px,1.05vw,16px);
+  color:var(--creme);
+  border:1.6px solid rgba(255,248,229,.34);
+  transition:background-color .2s ease, border-color .2s ease, transform .2s ease;
 }
-.media__slot--live > img,
-.media__slot--live > video{
-  display:block;
-  width:100%; height:100%;
-  object-fit:cover;
+.btn-hero svg{
+  width:18px; height:18px;
+  fill:none; stroke:currentColor; stroke-width:2;
+  stroke-linecap:round; stroke-linejoin:round;
+  transition:transform .2s ease;
 }
-
-/* ---------- o vídeo não aparece; quem aparece é a tela ----------
-   O <video> continua no lugar, do tamanho certo, decodificando — mas com
-   opacidade zero. O que o visitante vê é um <canvas> desenhado a partir dele.
-
-   Motivo: o botão de play do iOS mora dentro do shadow DOM do <video>, e
-   esconder pseudo-elemento de fabricante é aposta — já falhou duas vezes
-   aqui. Opacidade zero no elemento inteiro leva o botão junto, sem aposta
-   nenhuma. E canvas não tem controle nativo pra desenhar.
-
-   O ganho maior é outro: desenhar um quadro não pede permissão de autoplay.
-   No Modo de Baixo Consumo do iPhone o autoplay simplesmente nunca vem, e
-   esse caminho não depende dele. */
-video.e-fonte{ opacity:0 !important; }
-.tela-video{
-  position:absolute; inset:0; z-index:1;
-  display:block; width:100%; height:100%;
-  background-size:cover; background-position:center;
+.btn-hero:hover{
+  background:rgba(255,248,229,.14);
+  border-color:rgba(255,248,229,.6);
 }
+.btn-hero:hover svg{ transform:translateX(3px); }
+.btn-hero:active{ transform:scale(.97); }
 
 /* ---------- selo circular ---------- */
 .seal{
-  position:absolute; z-index:5;
-  top:26%; right:5.4%;
-  width:clamp(76px,8.2vw,116px); aspect-ratio:1;
+  position:absolute; z-index:3;
+  top:7%; right:6%;
+  width:clamp(78px,7.6vw,116px); aspect-ratio:1;
   display:grid; place-items:center;
+  background:var(--creme);
+  border-radius:50%;
+  box-shadow:0 14px 32px rgba(20,3,16,.4);
+  padding:5%;
 }
 .seal__ring{
   position:absolute; inset:0;
@@ -346,29 +352,17 @@ video.e-fonte{ opacity:0 !important; }
 }
 @keyframes spin{ to{ transform:rotate(360deg); } }
 
-/* ---------- claim ---------- */
-.pitch{
-  position:absolute; z-index:5;
-  left:5.4%; bottom:20%;
-  margin:0;
-  max-width:clamp(140px,17vw,230px);
-  font-family:var(--display);
-  font-weight:600;
-  font-size:clamp(19px,1.9vw,27px);
-  line-height:1.06;
-  letter-spacing:-.02em;
-  color:var(--roxo);
-}
-
 /* ---------- dica de rolagem ---------- */
 .cue{
-  position:absolute; z-index:6;
-  left:7.5%; bottom:9.5%;
+  position:absolute; z-index:3;
+  left:50%; bottom:clamp(16px,2.4vw,26px);
+  transform:translateX(-50%);
   width:clamp(40px,3.6vw,50px); aspect-ratio:1;
   display:grid; place-items:center;
   border-radius:50%;
-  border:1.6px solid rgba(142,36,122,.3);
-  color:var(--roxo);
+  background:rgba(255,248,229,.14);
+  border:1.6px solid rgba(255,248,229,.4);
+  color:var(--creme);
   animation:cueBob 2.4s ease-in-out infinite;
 }
 .cue svg{
@@ -377,8 +371,8 @@ video.e-fonte{ opacity:0 !important; }
   stroke-linecap:round; stroke-linejoin:round;
 }
 @keyframes cueBob{
-  0%,100%{ transform:translateY(-3px); opacity:.5; }
-  50%    { transform:translateY(3px);  opacity:1; }
+  0%,100%{ transform:translateX(-50%) translateY(-3px); opacity:.6; }
+  50%    { transform:translateX(-50%) translateY(3px);  opacity:1; }
 }
 
 /* =========================================================
@@ -447,80 +441,6 @@ video.e-fonte{ opacity:0 !important; }
 }
 .dock__btn:hover .dock__tip,
 .dock__btn:focus-visible .dock__tip{ opacity:1; }
-
-/* =========================================================
-   HERO LARGO — o vídeo preenche o blob inteiro
-   =========================================================
-   Só entra quando o palco é deitado. Em retrato o cover teria de
-   ampliar tanto que cortaria as laterais da tigela, e aí vale mais
-   o painel centrado do layout empilhado.
-   ========================================================= */
-@media (min-width:861px) and (min-aspect-ratio:1/1){
-  .media{
-    inset:0;
-    left:0; right:0; top:0; bottom:0;
-    width:auto; height:auto;
-    transform:none;
-    aspect-ratio:auto;
-    /* mesmo path do blob, esticado junto com ele */
-    -webkit-mask-image:var(--blob-mask);
-            mask-image:var(--blob-mask);
-    -webkit-mask-size:100% 100%;
-            mask-size:100% 100%;
-    -webkit-mask-repeat:no-repeat;
-            mask-repeat:no-repeat;
-  }
-  .media__slot{ border-radius:0; }
-
-  /* .scene tem a mesma caixa do blob: mascarar aqui impede que o halo do
-     texto escorra para fora da forma (medido: a caixa do halo começava
-     ~25px à esquerda da borda do blob). */
-  .scene{
-    /* a máscara cria contexto de empilhamento: sem z-index aqui, o
-       título inteiro cairia para trás do vídeo */
-    z-index:4;
-    -webkit-mask-image:var(--blob-mask);
-            mask-image:var(--blob-mask);
-    -webkit-mask-size:100% 100%;
-            mask-size:100% 100%;
-    -webkit-mask-repeat:no-repeat;
-            mask-repeat:no-repeat;
-  }
-
-  /* com o vídeo cobrindo o palco, o título passa para cima dele */
-  .giant{ z-index:4; }
-  .media__slot--live{ box-shadow:none; background:transparent; }
-
-  /* Contorno, não brilho. Sobre vídeo o texto precisa funcionar nos dois
-     extremos: contra o açaí escuro quem separa é o miolo claro, contra a
-     banana e a tigela branca quem separa é o contorno. Por isso o miolo
-     virou creme — roxo escuro com contorno escuro desapareceria no açaí.
-     paint-order põe o traço atrás do preenchimento, então a letra não
-     perde peso; sem suporte, o traço só divide meio pixel com o miolo. */
-  .giant,
-  .pitch{
-    color:var(--creme);
-    -webkit-text-stroke:clamp(1.4px, .022em, 3.2px) #1C0518;
-    paint-order:stroke fill;
-    text-shadow:0 .022em .05em rgba(28,5,24,.42);
-  }
-  .pitch{
-    -webkit-text-stroke-width:clamp(1.1px, .062em, 2.2px);
-  }
-
-  .cue{
-    background:rgba(255,248,229,.88);
-    border-color:rgba(142,36,122,.34);
-  }
-
-  /* o selo agora pousa sobre a foto: vira adesivo */
-  .seal{
-    background:var(--creme);
-    border-radius:50%;
-    box-shadow:0 10px 26px rgba(40,4,36,.26);
-    padding:3%;
-  }
-}
 
 /* =========================================================
    A LOJA — texto à esquerda, reel vertical à direita
@@ -1551,11 +1471,8 @@ video.e-fonte{ opacity:0 !important; }
    RESPONSIVO
    ========================================================= */
 @media (max-width:1080px){
-  :root{ --giant-f:min(clamp(52px,11vw,112px), 12vh); }
   .loja__painel{ grid-template-columns:1fr .9fr; }
   .loja__midia{ max-width:clamp(240px,32vw,340px); }
-  .pitch{ max-width:clamp(130px,22vw,200px); font-size:clamp(18px,2.1vw,24px); }
-  .seal{ width:clamp(72px,7.6vw,100px); }
 }
 
 @media (max-width:860px){
@@ -1563,11 +1480,8 @@ video.e-fonte{ opacity:0 !important; }
     /* o dedo empurra o cartão diretamente: manipulação direta pede resposta
        mais curta que um clique no cartão vizinho */
     --t-troca:.28s;
-    --stage-pad:clamp(18px,5vw,30px);
     --nav-h:clamp(64px,15vw,78px);
     --dock-h:clamp(74px,17vw,86px);
-    --giant-f:min(clamp(40px,9.2vw,86px), 12vh);
-    --panel-r:clamp(18px,4.6vw,34px);
   }
 
   .nav{ flex-wrap:wrap; }
@@ -1583,48 +1497,46 @@ video.e-fonte{ opacity:0 !important; }
   .nav__links a + a::before{ display:none; }
   .btn-order{ font-size:13px; padding:11px 20px; }
 
-  /* nessa proporção o SVG esticado deforma demais as quinas */
-  .blob{ display:none; }
-  .hero__stage{
-    background:var(--creme);
-    border-radius:clamp(30px,7vw,48px);
-    box-shadow:0 22px 52px rgba(40,4,36,.3);
+  /* ---------- hero empilhado: texto em cima, foto em cartão embaixo ----------
+     Medido: um recorte de tela cheia (edge-to-edge) não deixava espaço
+     nenhum pra três linhas de título — a tigela tomava a tela inteira.
+     Por isso aqui a foto larga vira um cartão quadrado, no mesmo ritmo
+     empilhado que a loja logo abaixo já usa. */
+  .hero{
+    display:flex; flex-direction:column;
+    height:auto; min-height:100svh;
+    padding:var(--nav-h) var(--gutter) calc(var(--dock-h) + 16px);
+    gap:clamp(20px,4.6vw,30px);
+    justify-content:center;
   }
+  .hero__conteudo{
+    order:1; position:static;
+    height:auto; padding:0;
+    display:block;
+  }
+  .scene{ max-width:none; text-align:center; }
+  .sobrancelha--hero{ justify-content:center; }
+  .pitch{ margin-left:auto; margin-right:auto; }
+  .btn-hero{ margin:0 auto; }
 
-  .seal, .cue{ display:none; }
+  .hero__foto{
+    order:2; position:relative; inset:auto;
+    width:100%; aspect-ratio:1/1;
+    border-radius:clamp(24px,6vw,32px);
+    box-shadow:0 22px 50px rgba(20,3,16,.4);
+    /* fica mais claro: a foto virou cartão, o texto não mora mais em cima
+       dela — o véu aqui é só um toque de profundidade, não legibilidade */
+    animation:none;
+  }
+  .hero__img{ object-position:56% 48%; }
+  .hero__veu{ opacity:.4; }
 
-  .giant{
-    top:0; left:0; right:0;
-    text-align:center;
+  .seal{
+    top:auto; right:auto;
+    bottom:5%; left:5%;
+    width:clamp(62px,15vw,82px);
   }
-
-  /* empilhado: título em cima, painel no meio, claim embaixo. A .media passa
-     a ser a faixa disponível e o slot se centra dentro dela — assim o painel
-     cresce até encostar nas bordas sem nunca ficar mais estreito que 5:4,
-     proporção abaixo da qual o cover começa a comer as laterais da tigela. */
-  .media{
-    left:0; right:0;
-    top:calc(var(--giant-f) * 2.4 + 12px);
-    bottom:var(--claim-band);
-    transform:none;
-    width:auto; height:auto;
-    aspect-ratio:auto;
-  }
-  .media__slot{
-    left:50%; top:50%; right:auto; bottom:auto;
-    transform:translate(-50%,-50%);
-    width:min(100%, calc(100cqh * var(--panel-ar-m)));
-    height:auto;
-    aspect-ratio:var(--panel-ar-m);
-  }
-
-  .pitch{
-    left:0; right:0; bottom:5%;
-    max-width:none;
-    text-align:center;
-    font-size:clamp(20px,5.4vw,28px);
-    line-height:1.16;
-  }
+  .cue{ display:none; }
 
   /* ---------- a loja, empilhada ---------- */
   .loja{ padding-top:clamp(44px,8vw,80px); }
@@ -1643,12 +1555,11 @@ video.e-fonte{ opacity:0 !important; }
 
 /* pouca altura: o claim sai e a faixa inteira vira painel */
 @media (max-width:860px) and (max-height:680px){
-  :root{ --claim-band:var(--panel-gap); --panel-ar-m:1.6; }
+  .hero{ gap:clamp(12px,3vw,18px); }
   .pitch{ display:none; }
 }
 
 @media (max-width:520px){
-  :root{ --giant-f:min(clamp(34px,11.5vw,62px), 12vh); --panel-ar-m:1; }
   .loja__painel{ padding:26px 22px 30px; }
   .dado__ico{ width:32px; height:32px; border-radius:10px; }
   .loja__acoes{ gap:10px; }

@@ -37,53 +37,60 @@
 
 <main>
 <!-- ===========================================================
-     PARTE 1 — vitrine. O hero fica preso na tela enquanto o vídeo
-     é arrastado pelo scroll; no fim solta e a loja sobe por cima.
+     PARTE 1 — vitrine. Uma foto só, sem vídeo: a tigela real em vez
+     da tigela renderizada. A própria imagem já vem com o espaço vazio
+     à esquerda para o título — é nele que o texto mora. No celular a
+     foto vira um cartão abaixo do texto, porque medido (ver o CSS) o
+     recorte de tela cheia não deixava espaço nenhum para escrever.
      =========================================================== -->
 <section class="hero" id="hero">
-  <div class="hero__pin">
-    <div class="hero__stage" id="stage">
 
-      <svg class="blob" viewBox="0 0 1200 820" preserveAspectRatio="none" aria-hidden="true">
-        <path d="M128 34C330 14 560 26 760 20c120-4 240 2 314 16 62 12 96 56 100 120 6 144-8 314-2 470 4 78-32 138-110 154-182 20-462 4-682 12-112 4-228 0-284-22-56-22-74-70-70-134-6-166 8-336 2-480 4-64 46-110 108-122z"/>
-      </svg>
-
-      <div class="media">
-        <div class="media__slot media__slot--live">
-          <video data-sd="assets/video/acai-hero.mp4" data-hd="assets/video/acai-hero-hd.mp4" data-sm="assets/video/acai-hero-scrub-1256.mp4"
-                 poster="assets/video/acai-hero-poster.webp"
-                 autoplay muted loop playsinline webkit-playsinline preload="auto"
-                 aria-label="Tigela de açaí com morango, banana e granola flutuando"></video>
-        </div>
-      </div>
-
-      <article class="scene is-on">
-        <h1 class="giant" aria-label="açaí cremoso do seu jeito">
-          <span class="ln" aria-hidden="true">açaí</span>
-          <span class="ln" aria-hidden="true">cremoso</span>
-          <span class="ln" aria-hidden="true">do seu jeito</span>
-        </h1>
-        <p class="pitch">cremoso.<br>gelado.<br>na hora.</p>
-      </article>
-
-      <div class="seal" aria-hidden="true">
-        <svg class="seal__ring" viewBox="0 0 120 120">
-          <defs><path id="sealPath" d="M60,60 m-44,0 a44,44 0 1,1 88,0 a44,44 0 1,1 -88,0"/></defs>
-          <text><textPath href="#sealPath" startOffset="0">feito na hora • 100% natural • feito na hora • 100% natural • </textPath></text>
-        </svg>
-        <svg class="seal__mark" viewBox="0 0 120 128">
-          <path d="M60 118C32 96 13 78 13 54 13 36 26 24 41 24c8 0 15 4 19 11 4-7 11-11 19-11 15 0 28 12 28 30 0 24-19 42-47 64z"/>
-          <path d="M61 33c-2-14 7-25 21-28 3 13-5 25-19 29z"/>
-          <path d="M63 35c9-10 23-12 34-7-5 12-18 19-31 15z"/>
-        </svg>
-      </div>
-
-      <a class="cue" href="#loja" data-ir aria-label="Ir para as informações da loja">
-        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4v14"/><path d="m6 13 6 6 6-6"/></svg>
+  <div class="hero__conteudo">
+    <article class="scene is-on">
+      <p class="sobrancelha sobrancelha--hero"><i aria-hidden="true"></i>açaí artesanal</p>
+      <h1 class="giant" aria-label="açaí cremoso do seu jeito">
+        <span class="ln" aria-hidden="true">açaí</span>
+        <span class="ln" aria-hidden="true">cremoso</span>
+        <span class="ln" aria-hidden="true">do seu jeito</span>
+      </h1>
+      <p class="pitch">cremoso.<br>gelado.<br>na hora.</p>
+      <a class="btn-hero" href="#cardapio" data-ir>
+        montar meu açaí
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
       </a>
+    </article>
+  </div>
 
+  <div class="hero__foto">
+    <picture>
+      <source media="(max-width:860px)" type="image/webp" srcset="assets/img/hero/acai-bowl-mobile.webp">
+      <source media="(max-width:860px)" srcset="assets/img/hero/acai-bowl-mobile.jpg">
+      <source type="image/webp" srcset="assets/img/hero/acai-bowl-900.webp 900w, assets/img/hero/acai-bowl-1400.webp 1400w, assets/img/hero/acai-bowl-1983.webp 1983w" sizes="100vw">
+      <img class="hero__img" src="assets/img/hero/acai-bowl-1400.jpg"
+           srcset="assets/img/hero/acai-bowl-900.jpg 900w, assets/img/hero/acai-bowl-1400.jpg 1400w, assets/img/hero/acai-bowl-1983.jpg 1983w"
+           sizes="100vw" width="1983" height="793"
+           alt="Tigela de açaí coberta de morango, framboesa, amora, banana e granola, com respingo de açaí ao redor"
+           decoding="async" fetchpriority="high">
+    </picture>
+    <span class="hero__veu" aria-hidden="true"></span>
+
+    <div class="seal" aria-hidden="true">
+      <svg class="seal__ring" viewBox="0 0 120 120">
+        <defs><path id="sealPath" d="M60,60 m-44,0 a44,44 0 1,1 88,0 a44,44 0 1,1 -88,0"/></defs>
+        <text><textPath href="#sealPath" startOffset="0">feito na hora • 100% natural • feito na hora • 100% natural • </textPath></text>
+      </svg>
+      <svg class="seal__mark" viewBox="0 0 120 128">
+        <path d="M60 118C32 96 13 78 13 54 13 36 26 24 41 24c8 0 15 4 19 11 4-7 11-11 19-11 15 0 28 12 28 30 0 24-19 42-47 64z"/>
+        <path d="M61 33c-2-14 7-25 21-28 3 13-5 25-19 29z"/>
+        <path d="M63 35c9-10 23-12 34-7-5 12-18 19-31 15z"/>
+      </svg>
     </div>
   </div>
+
+  <a class="cue" href="#loja" data-ir aria-label="Ir para as informações da loja">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4v14"/><path d="m6 13 6 6 6-6"/></svg>
+  </a>
+
 </section>
 
 <!-- ===========================================================

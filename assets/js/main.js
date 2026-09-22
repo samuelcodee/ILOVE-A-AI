@@ -66,29 +66,6 @@
     });
   });
 
-  /* ---------- o vídeo do hero acompanha o scroll ----------
-     Parado, ele roda sozinho em loop. Assim que a roda do mouse se move, o
-     tempo do vídeo passa a seguir a posição do scroll: para baixo a câmera
-     entra na tigela, para cima ela sai. Alguns instantes sem scroll e ele
-     volta a rodar sozinho, de onde parou.
-
-     O arquivo é um vai-e-volta, então o instante t e o instante (dur - t)
-     mostram exatamente o mesmo quadro. Dobrando o tempo sempre para a metade
-     de ida, a troca entre "rodando sozinho" e "preso ao scroll" nunca dá
-     salto de imagem, mesmo quando o loop já passou da metade.
-
-     Vale no dedo também. Isso já esteve desligado no toque porque a busca
-     engasgava — mas o culpado era o ARQUIVO, não o dedo: o vídeo do celular
-     tinha um keyframe a cada 250 quadros, e cada busca obrigava o
-     decodificador a remontar até 250 quadros pra chegar no instante pedido.
-     Medido: 88ms por busca, contra 16,7ms de orçamento por quadro. Com GOP
-     16 a mesma busca custa 10ms e cabe folgado dentro do quadro. */
-  /* distância mínima entre o tempo pedido e o tempo atual pra valer uma
-     busca nova; ajustado à taxa de quadros do arquivo que for escolhido */
-  let QUADRO = 1 / 30;
-  /* e o passo que realmente vale, que cresce se o aparelho não der conta */
-  let PASSO = 1 / 30;
-
   /* O iOS só libera autoplay pra vídeo comprovadamente mudo e em linha, e
      consulta as propriedades, não os atributos do HTML. Com o src definido
      por script — que é o nosso caso nos dois vídeos — o atributo sozinho não
@@ -241,205 +218,21 @@
     v.addEventListener('loadeddata', () => provaMovimento(v, planoB), { once: true });
   };
 
-  const hero  = document.getElementById('hero');
-  const video = document.querySelector('.media__slot--live video');
-  const podeArrastar = !!video && !reduced;
+  const hero = document.getElementById('hero');
 
-  /* Duas versões do mesmo vídeo: a pesada (crf 22, 6 MB) só vai pra quem tem
-     mouse e tela grande — que é exatamente quem arrasta a animação pelo scroll
-     e enxerga a diferença. No celular continua a de 3,2 MB. Economia de dados
-     ou rede fraca derrubam a pesada mesmo no desktop. */
-  if (video && !video.getAttribute('src')) {
-    const rede = navigator.connection || {};
-    const aguenta = !rede.saveData && !/2g/.test(rede.effectiveType || '');
-    /* Três degraus. O de celular é 720x372 a 20 q/s com GOP 16: 1,1 MB
-       contra os 731 kB do anterior, e em troca cada busca cai de 88ms para
-       10ms. Pelo SSIM ele ainda é melhor de imagem que o antigo (0,971
-       contra 0,942), porque o que inchava o arquivo velho não era qualidade,
-       era o intervalo enorme entre keyframes.
-
-       O arquivo pesado (crf 22) continua só pra tela grande com rede boa. */
-    const fino = matchMedia('(pointer:fine)').matches;
-    const fonte = !fino ? video.dataset.sm
-                : (aguenta && innerWidth >= 900 && video.dataset.hd) ? video.dataset.hd
-                : video.dataset.sd;
-
-    /* o de celular é 20 q/s, os outros 30: é esta a distância mínima que
-       vale uma busca nova */
-    QUADRO = PASSO = !fino ? 1 / 20 : 1 / 30;
-
-    /* Em qualquer tela o vídeo agora é a interação — o scroll arrasta o
-       tempo dele — então ele não pode chegar atrasado em nenhuma. */
-    video.src = fonte || video.dataset.sd;
-  }
-
-  let dur = 0, meia = 0, alvo = 0, atual = 0, presoAoScroll = false, raf = 0;
-
-  /* silêncio de roda que devolve o vídeo pro loop. 70ms passa folgado
-     entre dois cliques de wheel (que chegam a cada ~40ms enquanto se
-     gira) e é curto demais pra virar imagem parada aos olhos. */
-  const FOLGA = 70;
-  let ultimoScroll = 0;
-
-  const dobra = (t) => (t <= meia ? t : dur - t);
-
-  const noHero = () => {
-    const r = hero.getBoundingClientRect();
-    return r.bottom > innerHeight * 0.15;
-  };
-
-  /* quanto do hero já passou — ele é alto e fica preso, então esse trecho de
-     scroll é a linha do tempo do vídeo */
-  const progresso = () => {
-    const span = hero.offsetHeight - innerHeight;
-    if (span <= 0) return 0;
-    return Math.min(1, Math.max(0, -hero.getBoundingClientRect().top / span));
-  };
-
-  /* Persegue o alvo em vez de pular até ele: a roda do mouse anda aos
-     solavancos, e buscar direto em cada salto faz a imagem pipocar.
-
-     A perseguição é por TEMPO, não por quadro. Com um fator fixo por quadro a
-     imagem alcança o scroll no dobro da velocidade num monitor de 120 Hz e na
-     metade num de 30 — o mesmo código com sensação diferente dependendo da
-     tela. Com o expoente no tempo decorrido, a resposta é a mesma em todas.
-
-     0.22 por quadro de 60 Hz: alcança 90% do caminho em ~9 quadros (150ms).
-     Era 0.16, que levava ~13 quadros e deixava a imagem visivelmente atrás
-     do dedo. */
-  const PERSEGUE = 0.22;
-  let ultimoQuadro = 0;
-
-  const passo = () => {
-    const agora = performance.now();
-    /* o primeiro quadro depois de uma pausa não pode valer por vinte */
-    const dt = ultimoQuadro ? Math.min(64, agora - ultimoQuadro) / 16.67 : 1;
-    ultimoQuadro = agora;
-
-    atual += (alvo - atual) * (1 - Math.pow(1 - PERSEGUE, dt));
-    if (Math.abs(alvo - atual) < QUADRO * 1.5) atual = alvo;
-    if (!video.seeking && Math.abs(video.currentTime - atual) >= PASSO) video.currentTime = atual;
-
-    /* Alcançou o scroll E a roda está quieta: devolve pro loop agora.
-       Alcançou mas a roda ainda anda: continua de olho, sem soltar.
-       Antes isso era um setTimeout fixo, e o vídeo passava o intervalo
-       inteiro congelado no mesmo quadro. */
-    if (atual === alvo && performance.now() - ultimoScroll >= FOLGA) { solta(); return; }
-    raf = requestAnimationFrame(passo);
-  };
-
-  const pintaHero = pinturaEm(video);
-  const derivaHero = video
-    ? criaDeriva(video, () => noHero() && !presoAoScroll, () => PASSO)
-    : { comecar() {}, parar() {} };
-  const comecaADeriva = () => derivaHero.comecar();
-  const paraADeriva = () => derivaHero.parar();
-
-  function largaOScroll() {
-    presoAoScroll = false;
-    ultimoQuadro = 0;
-    if (raf) { cancelAnimationFrame(raf); raf = 0; }
-  }
-
-  function solta() {
-    largaOScroll();
-    if (video && noHero()) {
-      tocar(video).catch(comecaADeriva);
-      provaMovimento(video, comecaADeriva);
-    }
-  }
-
-  /* aba escondida não desenha, mas vídeo em laço continua decodificando e
-     gastando bateria — no celular isso importa mais que em qualquer outro
-     lugar. Volta a rodar quando a aba volta, se o hero ainda estiver em cena. */
-  document.addEventListener('visibilitychange', () => {
-    if (!video) return;
-    if (document.hidden) video.pause();
-    else if (noHero() && !presoAoScroll) tocar(video).catch(comecaADeriva);
-  });
-
-  function arrasta() {
-    if (!video) return;
-
-    /* fora de cena o vídeo não precisa rodar */
-    if (!noHero()) {
-      largaOScroll();
-      if (!video.paused) video.pause();
-      return;
-    }
-    if (!podeArrastar || !dur) {
-      if (video.paused) tocar(video).catch(() => {});
-      return;
-    }
-
-    if (!presoAoScroll) {
-      paraADeriva();
-      presoAoScroll = true;
-      video.pause();
-      atual = dobra(video.currentTime);
-    }
-    ultimoScroll = performance.now();
-    alvo = progresso() * meia;
-    if (!raf) raf = requestAnimationFrame(passo);
-  }
-
-  /* Quanto custa, NESTE aparelho, pedir um instante novo. Média móvel: um
-     pico isolado não pode mudar o comportamento, mas um aparelho
-     consistentemente lento sim. Acima de 24ms a busca já não cabe num quadro
-     de 60 Hz, então vale pedir menos e mais espaçado — a imagem anda em
-     degraus um pouco maiores, que é muito menos visível que engasgo. */
-  if (podeArrastar) {
-    let custo = 0, pedidaEm = 0;
-    video.addEventListener('seeking', () => { pedidaEm = performance.now(); });
-    video.addEventListener('seeked', () => {
-      if (!pedidaEm) return;
-      const d = performance.now() - pedidaEm;
-      pedidaEm = 0;
-      custo = custo ? custo * 0.8 + d * 0.2 : d;
-      PASSO = custo > 24 ? QUADRO * 3 : custo > 14 ? QUADRO * 2 : QUADRO;
-    });
-  }
-
-  if (podeArrastar) {
-    const medido = () => { dur = video.duration; meia = dur / 2; };
-    video.readyState >= 1
-      ? medido()
-      : video.addEventListener('loadedmetadata', medido, { once: true });
-  }
-
-  /* autoplay pode ser recusado (aba em segundo plano, política do navegador);
-     pedir o play explicitamente deixa o comportamento previsível. Quem pediu
-     menos movimento no sistema fica com a tigela parada no primeiro quadro. */
-  if (video) {
-    if (reduced) { video.autoplay = false; video.loop = false; video.pause(); }
-    else {
-      tocar(video).catch(comecaADeriva);
-      acordaQuadro(video, comecaADeriva);
-    }
-  }
-
-  /* O iOS recusa o autoplay em algumas situações e aí desenha um botão de
-     play por cima do poster — cara de vídeo pra assistir, que é justamente o
-     contrário do que isto é. Buscar (currentTime) não precisa de permissão
-     nenhuma, então mesmo recusado o arrasto funciona; este toque só devolve
-     o laço quando o dedo permite. Uma vez só, e passivo. */
-  if (video && !reduced) {
-    const destrava = () => {
-      tocar(video).then(() => { if (presoAoScroll) video.pause(); }).catch(() => {});
-    };
-    addEventListener('touchstart', destrava, { once: true, passive: true });
-    addEventListener('pointerdown', destrava, { once: true, passive: true });
-    /* e o mesmo toque devolve qualquer reel que tenha ficado pra trás */
-    /* Gesto do usuário derruba a política de autoplay do iOS, então vale
-       apagar o "não anda" e tentar de novo — inclusive pro hero. */
+  /* Gesto do usuário derruba a política de autoplay do iOS — vale apagar o
+     "não anda" de qualquer reel que tenha ficado pra trás e tentar de novo.
+     Uma vez só, e passivo. (Isto também cobria o vídeo do hero, que não
+     existe mais: virou uma foto, sem autoplay pra destravar.) */
+  if (!reduced) {
     const destravaReels = () => {
-      naoAndou.delete(video);
       document.querySelectorAll('.reel video').forEach((v) => {
         naoAndou.delete(v);
         if (!v.dataset.src && v.getAttribute('src') && v.paused) tocar(v).catch(() => {});
       });
     };
     addEventListener('touchstart', destravaReels, { once: true, passive: true });
+    addEventListener('pointerdown', destravaReels, { once: true, passive: true });
   }
 
   /* ---------- a seção da loja ----------
@@ -1320,7 +1113,7 @@
     if (ticking) return;
     ticking = true;
     requestAnimationFrame(() => {
-      arrasta(); revela(); desliza(); marcaZona(); cuidaDosReels();
+      revela(); desliza(); marcaZona(); cuidaDosReels();
       ticking = false;
     });
   };
@@ -1392,5 +1185,5 @@
     });
   });
 
-  arrasta(); revela(); desliza(); marcaZona(); cuidaDosReels(); pinta();
+  revela(); desliza(); marcaZona(); cuidaDosReels(); pinta();
 })();
