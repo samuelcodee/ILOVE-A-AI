@@ -1113,8 +1113,13 @@
     if (ticking) return;
     ticking = true;
     requestAnimationFrame(() => {
-      revela(); desliza(); marcaZona(); cuidaDosReels();
-      ticking = false;
+      /* Se uma das quatro travar (erro de rede, DOM mudou embaixo do pé,
+         qualquer coisa), o "ticking = false" tem que rodar do mesmo jeito —
+         sem o finally, uma exceção aqui trava o scroll da página inteira
+         pro resto da visita: nenhuma seção revela, o dock para de marcar,
+         os reels não pausam mais sozinhos, e nada avisa o visitante. */
+      try { revela(); desliza(); marcaZona(); cuidaDosReels(); }
+      finally { ticking = false; }
     });
   };
   addEventListener('scroll', onScroll, { passive: true });

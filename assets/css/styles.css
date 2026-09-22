@@ -451,10 +451,13 @@ a{ color:inherit; text-decoration:none; }
    horizontalmente, alinhado na vertical.
    ========================================================= */
 .loja{
-  /* sobe por cima do hero preso — sem isso as seções se encostam num corte
-     seco; com isso o painel entra deslizando sobre a tigela */
+  /* Isto subia -11vh pra deslizar por cima do hero PRESO — um vídeo pinado
+     por 200vh de scroll extra. O hero virou uma foto de altura única, sem
+     pin nenhum, e a margem negativa passou a comer o fim da própria foto: a
+     seção seguinte encostava direto nela, sem respiro (medido: 0px de
+     espaço entre o fim da foto e o painel creme). O padding-top sozinho já
+     dá esse respiro, proporcional à tela. */
   position:relative; z-index:3;
-  margin-top:-11vh;
   padding:clamp(42px,6vw,96px) var(--gutter) clamp(40px,5vw,72px);
 }
 
@@ -686,6 +689,16 @@ a{ color:inherit; text-decoration:none; }
 }
 
 /* ---------- entrada da seção ---------- */
+/* Sem isto, um item de grid 1fr herda min-width:auto por padrão — o
+   conteúdo mais largo lá dentro (aqui, o hit-area do .dado__link, que
+   sangra 10px de cada lado com margem negativa) vira o piso da coluna
+   e ela nunca encolhe além disso. Medido: a 320px a coluna de texto
+   ficava com 300px de largura em vez dos 240px que sobravam de
+   verdade — 60px de sobra invisível (o body tem overflow-x:hidden,
+   então não vira barra de rolagem), mas ainda assim layout errado. */
+.loja__texto,
+.loja__midia{ min-width:0; }
+
 .loja__texto > *,
 .loja__midia{
   opacity:0;
@@ -1333,20 +1346,28 @@ a{ color:inherit; text-decoration:none; }
 }
 .carrinho.is-ativo .carrinho__barra{ transform:translate(-50%, 0); }
 
+/* medido: o creme claro por cima do verde (pensado pra 'destacar' o numero)
+   CLAREAVA o fundo e derrubava o contraste do proprio texto creme pra
+   3,41:1 — quanto mais perto do creme o fundo chega, mais perto de zero
+   fica a diferenca com o texto creme. Um véu ESCURO faz o oposto: escurece
+   o verde sem mudar o texto, e o verde puro já passa (4,99:1) — o véu só
+   ajuda. 6,4:1 medido. */
 .carrinho__conta{
   flex:none;
   width:24px; height:24px;
   display:grid; place-items:center;
   border-radius:50%;
-  background:rgba(255,248,229,.22);
+  background:rgba(28,5,24,.16);
   font-family:var(--display); font-weight:600; font-size:12.5px;
 }
 .carrinho__rotulo{ font-size:13px; font-weight:600; white-space:nowrap; }
+/* mesma correção do .carrinho__conta, mesmo motivo: 3,79:1 medido antes,
+   6,4:1 depois de escurecer em vez de clarear */
 .carrinho__total{
   font-family:var(--display); font-weight:600; font-size:14px;
   padding:8px 14px;
   border-radius:999px;
-  background:rgba(255,248,229,.16);
+  background:rgba(28,5,24,.16);
   white-space:nowrap;
 }
 
